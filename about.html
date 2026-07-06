@@ -26,9 +26,11 @@
   .l-mtn-bg{bottom:0;}
   .l-mtn-fg{bottom:0;}
   .l-ground{bottom:0;}
-  img.l-fog{position:absolute;display:block;width:130%;height:auto;left:-15%;bottom:-4%;}
-  .l-fog-far{opacity:0.85;animation:fog-drift-far 80s ease-in-out infinite alternate, fog-pulse-far 44s ease-in-out infinite;}
-  .l-fog-near{opacity:0.92;animation:fog-drift-near 52s ease-in-out infinite alternate, fog-pulse-near 33s ease-in-out infinite;animation-delay:0s,7s;}
+  /* Fog: an inner element runs drift+pulse; the outer wrapper is moved by scroll parallax. */
+  .fog-wrap{position:absolute;left:0;width:100%;bottom:0;will-change:transform;}
+  .fog-wrap img{display:block;width:130%;height:auto;margin-left:-15%;}
+  .l-fog-far img{opacity:0.85;animation:fog-drift-far 80s ease-in-out infinite alternate, fog-pulse-far 44s ease-in-out infinite;}
+  .l-fog-near img{opacity:0.92;animation:fog-drift-near 52s ease-in-out infinite alternate, fog-pulse-near 33s ease-in-out infinite;animation-delay:0s,7s;}
   @keyframes fog-drift-far{from{transform:translateX(-4%);}to{transform:translateX(4%);}}
   @keyframes fog-drift-near{from{transform:translateX(5%);}to{transform:translateX(-5%);}}
   @keyframes fog-pulse-far{0%,55%{opacity:0.85;}68%{opacity:0.3;}80%,100%{opacity:0.85;}}
@@ -154,18 +156,18 @@
     .navlinks{gap:18px;font-size:11px;}
   }
   @media (prefers-reduced-motion: reduce){
-    .ticker-track,.l-fog-far,.l-fog-near{animation:none;}
+    .ticker-track,.l-fog-far img,.l-fog-near img{animation:none;}
     .reveal{opacity:1;transform:none;transition:none;}
-    img.layer{transform:none !important;}
+    img.layer,.fog-wrap{transform:none !important;}
   }
 </style>
 </head>
 <body>
   <div class="stage" aria-hidden="true">
     <img class="layer l-mtn-bg" data-from="10" data-to="-14" src="assets/mountains-bg.png" alt="">
-    <img class="layer l-fog l-fog-far" src="assets/fog-far.png" alt="">
-    <img class="layer l-mtn-fg" data-from="30" data-to="-6" src="assets/mountains-fg.png" alt="">
-    <img class="layer l-fog l-fog-near" src="assets/fog-near.png" alt="">
+    <div class="fog-wrap l-fog-far" data-from="115" data-to="-20" data-delay="0.5"><img src="assets/fog-far.png" alt=""></div>
+    <img class="layer l-mtn-fg" data-from="60" data-to="15" src="assets/mountains-fg.png" alt="">
+    <div class="fog-wrap l-fog-near" data-from="130" data-to="-40" data-delay="0.55"><img src="assets/fog-near.png" alt=""></div>
     <img class="layer l-ground" data-from="108" data-to="0" src="assets/ground-rock.png" alt="">
   </div>
   <div class="content">
@@ -274,8 +276,13 @@
   // across the full page scroll. Nearest layers travel furthest; ground docks at page end.
   (function(){
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var layers = Array.prototype.slice.call(document.querySelectorAll('.stage img.layer[data-from]')).map(function(el){
-      return { el: el, from: parseFloat(el.getAttribute('data-from')), to: parseFloat(el.getAttribute('data-to')) };
+    var layers = Array.prototype.slice.call(document.querySelectorAll('.stage [data-from]')).map(function(el){
+      return {
+        el: el,
+        from: parseFloat(el.getAttribute('data-from')),
+        to: parseFloat(el.getAttribute('data-to')),
+        delay: parseFloat(el.getAttribute('data-delay') || '0')  // 0..1: hold until this scroll fraction
+      };
     });
     var ticking = false;
     function update(){
@@ -284,7 +291,12 @@
       var max = Math.max(1, doc.scrollHeight - window.innerHeight);
       var p = Math.min(1, Math.max(0, window.scrollY / max));
       layers.forEach(function(l){
-        var y = l.from + (l.to - l.from) * p;
+        var lp = p;
+        if (l.delay > 0) {
+          // hold at `from` until scroll passes `delay`, then remap remaining range to 0..1
+          lp = p <= l.delay ? 0 : (p - l.delay) / (1 - l.delay);
+        }
+        var y = l.from + (l.to - l.from) * lp;
         l.el.style.transform = 'translate3d(0,' + y.toFixed(2) + '%,0)';
       });
     }
