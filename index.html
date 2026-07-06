@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitness Brainiac — Design Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#07070B;
+    --ink-2:#12111C;
+    --bone:#EDEAE2;
+    --concrete:#9092A8;
+    --blue:#5B7FFF;
+    --purple:#9D5CFF;
+    --red:#FF4438;
+    --amber:#FFB020;
+    --line:rgba(237,234,226,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--ink);color:var(--bone);font-family:'IBM Plex Sans',sans-serif;overflow-x:hidden;}
+  .display{font-family:'Archivo Black',sans-serif;text-transform:uppercase;line-height:0.92;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- TICKER ---------- */
+  .ticker-wrap{position:sticky;top:0;z-index:100;background:var(--ink-2);border-bottom:1px solid var(--line);overflow:hidden;height:40px;display:flex;align-items:center;}
+  .ticker-track{display:flex;white-space:nowrap;animation:scroll-ticker 68s linear infinite;}
+  @keyframes scroll-ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .ticker-item{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;padding:0 28px;display:flex;align-items:center;gap:8px;color:var(--concrete);border-right:1px solid var(--line);}
+  .ticker-item .up{color:var(--blue);}
+  .ticker-item .down{color:var(--red);}
+  .ticker-item.callout{color:var(--amber);font-weight:600;letter-spacing:0.08em;text-shadow:0 0 14px rgba(255,176,32,0.45);}
+
+  /* ---------- NAV ---------- */
+  nav{display:flex;justify-content:space-between;align-items:center;padding:22px 5vw;border-bottom:1px solid var(--line);position:relative;z-index:5;}
+  .logo{font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:0.02em;}
+  .logo span{color:var(--blue);}
+  .navlinks{display:flex;gap:32px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;color:var(--concrete);}
+  .navlinks a{color:var(--concrete);text-decoration:none;position:relative;}
+  .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--blue);transition:width .3s ease;}
+  .navlinks a:hover{color:var(--bone);}
+  .navlinks a:hover::after{width:100%;}
+
+  /* ---------- HERO / PHOTOREAL LAYER STACK ---------- */
+  .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 5vw;overflow:hidden;background:#050508;}
+  .cosmic{position:absolute;inset:0;z-index:0;}
+  .layer{position:absolute;left:-4%;right:-4%;background-repeat:no-repeat;}
+
+  .l-sky{top:0;height:70%;background-image:url('assets/sky-planet.jpg');background-size:cover;background-position:center 25%;}
+  .l-sky::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(5,5,8,0) 55%, #050508 100%);}
+
+  .l-mtn-bg{bottom:14vh;height:48vh;background-image:url('assets/mountains-bg.png');background-size:cover;background-position:bottom center;}
+
+  .l-fog-far{bottom:10vh;height:34vh;background-image:url('assets/fog-far.jpg');background-size:cover;background-position:bottom center;
+      mix-blend-mode:screen;opacity:0.85;animation:fog-drift-far 70s linear infinite alternate, fog-pulse-far 42s ease-in-out infinite;}
+
+  .l-mtn-fg{bottom:8vh;height:40vh;background-image:url('assets/mountains-fg.png');background-size:cover;background-position:bottom center;}
+
+  .l-fog-near{bottom:4vh;height:30vh;background-image:url('assets/fog-near.jpg');background-size:cover;background-position:bottom center;
+      mix-blend-mode:screen;opacity:0.9;animation:fog-drift-near 46s linear infinite alternate, fog-pulse-near 31s ease-in-out infinite;animation-delay:0s, 6s;}
+
+  .l-ground{bottom:-14vh;height:34vh;background-image:url('assets/ground-rock.jpg');background-size:cover;background-position:bottom center;}
+
+  @keyframes fog-drift-far{from{background-position:44% bottom;}to{background-position:56% bottom;}}
+  @keyframes fog-drift-near{from{background-position:60% bottom;}to{background-position:40% bottom;}}
+  @keyframes fog-pulse-far{0%,55%{opacity:0.82;}68%{opacity:0.28;}80%,100%{opacity:0.82;}}
+  @keyframes fog-pulse-near{0%,48%{opacity:0.88;}62%{opacity:0.32;}78%,100%{opacity:0.88;}}
+
+  .hero-content{position:relative;z-index:2;max-width:920px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:10px;}
+  .eyebrow::before{content:'';width:7px;height:7px;background:var(--blue);border-radius:50%;box-shadow:0 0 10px var(--blue);}
+  h1.display{font-size:clamp(46px,8vw,104px);letter-spacing:-0.01em;}
+  h1.display .out{-webkit-text-stroke:1px var(--concrete);color:transparent;}
+  .hero-sub{margin-top:26px;max-width:540px;font-size:17px;line-height:1.6;color:var(--concrete);}
+  .hero-cta{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap;}
+  .btn{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.05em;padding:15px 26px;border:1px solid var(--bone);color:var(--bone);text-decoration:none;transition:all .25s ease;}
+  .btn.primary{background:var(--bone);color:var(--ink);}
+  .btn.primary:hover{background:var(--blue);border-color:var(--blue);color:#050508;transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--purple);}
+  .btn.ghost:hover{transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--blue);border-color:var(--blue);color:var(--blue);}
+
+  /* ---------- SECTION SHARED ---------- */
+  section{padding:120px 5vw;border-bottom:1px solid var(--line);position:relative;z-index:1;background:var(--ink);}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--amber);margin-bottom:18px;}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease, transform .8s ease;}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:60px;align-items:start;}
+  .about-grid h2.display{font-size:clamp(30px,4vw,48px);margin-bottom:24px;}
+  .about-grid p{color:var(--concrete);font-size:16px;line-height:1.75;max-width:520px;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.04em;border:1px solid var(--line);padding:9px 14px;color:var(--concrete);}
+  .stat-block{border:1px solid var(--line);padding:28px;}
+  .stat-block .num{font-family:'Archivo Black',sans-serif;font-size:54px;color:var(--blue);line-height:1;}
+  .stat-block .lbl{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--concrete);letter-spacing:0.08em;margin-top:10px;}
+  .stat-block + .stat-block{margin-top:16px;}
+
+  /* ---------- PRICING ---------- */
+  .pricing-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:20px;}
+  .pricing-head h2.display{font-size:clamp(30px,4vw,48px);}
+  .rate-note{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--blue);letter-spacing:0.04em;}
+  .price-category{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--concrete);margin:44px 0 18px;padding-top:30px;border-top:1px solid var(--line);}
+  .price-category:first-of-type{border-top:none;padding-top:0;margin-top:36px;}
+  .price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);}
+  .price-card{background:var(--ink);padding:32px 26px;transition:transform .3s ease, box-shadow .3s ease;position:relative;}
+  .price-card:hover{transform:translate(-6px,-6px);box-shadow:6px 6px 0 var(--purple);z-index:2;}
+  .price-card .plabel{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--amber);letter-spacing:0.08em;margin-bottom:14px;}
+  .price-card h3{font-family:'Archivo Black',sans-serif;font-size:19px;text-transform:uppercase;margin-bottom:8px;}
+  .price-card .amt{font-family:'IBM Plex Mono',monospace;font-size:27px;color:var(--bone);margin:16px 0 6px;}
+  .price-card .per{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--concrete);}
+
+  /* ---------- MIND FORWARD ---------- */
+  .mf{background:var(--ink-2);}
+  .mf-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+  .mf h2.display{font-size:clamp(32px,5vw,58px);}
+  .mf p{color:var(--concrete);font-size:16px;line-height:1.75;margin-top:22px;max-width:480px;}
+  .quote-block{border-left:2px solid var(--purple);padding-left:24px;font-family:'Archivo Black',sans-serif;text-transform:none;font-size:clamp(22px,2.4vw,30px);line-height:1.3;color:var(--bone);}
+  .quote-block cite{display:block;margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--concrete);font-style:normal;letter-spacing:0.04em;}
+
+  footer{padding:60px 5vw;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;background:var(--ink);}
+  footer .mono{font-size:12px;color:var(--concrete);letter-spacing:0.04em;}
+
+  @media (max-width:800px){.about-grid,.mf-inner{grid-template-columns:1fr;}}
+  @media (prefers-reduced-motion: reduce){.ticker-track{animation:none;}.reveal{opacity:1;transform:none;transition:none;}.nebula,.planet,.star{animation:none;}}
+</style>
+</head>
+<body>
+
+  <div class="ticker-wrap"><div class="ticker-track" id="tickerTrack"></div></div>
+
+  <nav>
+    <div class="logo">FITNESS <span>BRAINIAC</span></div>
+    <div class="navlinks">
+      <a href="#about">ABOUT</a>
+      <a href="#pricing">TRAINING</a>
+      <a href="#mindforward">MIND FORWARD</a>
+      <a href="#contact">CONTACT</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="cosmic">
+      <div class="layer l-sky"></div>
+      <div class="layer l-mtn-bg"></div>
+      <div class="layer l-fog-far"></div>
+      <div class="layer l-mtn-fg"></div>
+      <div class="layer l-fog-near"></div>
+      <div class="layer l-ground"></div>
+    </div>
+    <div class="hero-content">
+      <div class="eyebrow">PJ HRADILEK — 23 YEARS COACHING · AGOURA HILLS, CA</div>
+      <h1 class="display" id="heroCaption">THE CLIMB<br>IS NEVER <span class="out">OVER</span></h1>
+      <p class="hero-sub">There's always a more beautiful mountain over the horizon. Every program is built on two decades of coaching, refined with the same rigor I put into the AI systems I build in my own time — so the plan you get is current, tested, and yours.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#pricing">SEE TRAINING RATES</a>
+        <a class="btn ghost" href="#about">MEET PJ</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="about-grid reveal">
+      <div>
+        <div class="tag">// 01 — ABOUT</div>
+        <h2 class="display">Trained by experience.<br>Sharpened by data.</h2>
+        <p>Twenty-three years on the gym floor taught me what works. Building and running my own local AI models in my spare time keeps me honest about what's changed. I bring both into every program — the instinct of two decades and an informed, current opinion on what actually moves the needle.</p>
+        <div class="chips">
+          <div class="chip">NASM</div><div class="chip">NCEP</div><div class="chip">NESTA</div>
+          <div class="chip">FREEMOTION</div><div class="chip">TRX</div><div class="chip">MAT</div>
+        </div>
+        <a class="btn ghost" href="about.html" style="margin-top:32px;display:inline-block;">MEET PJ IN FULL</a>
+      </div>
+      <div>
+        <div class="stat-block"><div class="num">23</div><div class="lbl">YEARS ACTIVE COACHING</div></div>
+        <div class="stat-block"><div class="num">6</div><div class="lbl">CERTIFICATIONS HELD</div></div>
+        <div class="stat-block"><div class="num">∞</div><div class="lbl">NEXT MOUNTAIN</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="reveal">
+      <div class="pricing-head">
+        <h2 class="display">Training Rates</h2>
+        <div class="rate-note">◆ 2026 RATES — ADJUSTED +7%</div>
+      </div>
+
+      <div class="price-category">// PRIVATE TRAINING</div>
+      <div class="price-grid">
+        <div class="price-card"><div class="plabel">SINGLE SESSION</div><h3>Consultation</h3><div class="amt">$150</div><div class="per">one-time</div></div>
+        <div class="price-card"><div class="plabel">8 SESSIONS</div><h3>Get Started</h3><div class="amt">$1,036</div><div class="per">$129.50 / session</div></div>
+        <div class="price-card"><div class="plabel">12 SESSIONS</div><h3>Build Momentum</h3><div class="amt">$1,439</div><div class="per">$119.92 / session</div></div>
+        <div class="price-card"><div class="plabel">24 SESSIONS</div><h3>Full Commitment</h3><div class="amt">$2,620</div><div class="per">$109.17 / session</div></div>
+      </div>
+
+      <div class="price-category">// SEMI-PRIVATE TRAINING — TRAIN IN PAIRS</div>
+      <div class="price-grid">
+        <div class="price-card"><div class="plabel">8 SESSIONS</div><h3>Partner Start</h3><div class="amt">$1,456</div><div class="per">$182.00 / session</div></div>
+        <div class="price-card"><div class="plabel">12 SESSIONS</div><h3>Partner Momentum</h3><div class="amt">$1,984</div><div class="per">$165.33 / session</div></div>
+        <div class="price-card"><div class="plabel">24 SESSIONS</div><h3>Partner Commitment</h3><div class="amt">$3,583</div><div class="per">$149.29 / session</div></div>
+      </div>
+      <div style="text-align:center;">
+        <a class="btn primary" href="training.html" style="margin-top:50px;">SEE FULL RATES + 30-MIN OPTION</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="mindforward" class="mf">
+    <div class="mf-inner reveal">
+      <div>
+        <div class="tag">// 02 — SEASONAL PROGRAM</div>
+        <h2 class="display">Mind Forward</h2>
+        <p>A seasonal program built around meditation and philosophical grounding — the mental training most fitness plans leave out. The body follows where the mind has already decided to go.</p>
+        <a class="btn ghost" href="mind-forward.html" style="margin-top:32px;display:inline-block;">EXPLORE MIND FORWARD</a>
+      </div>
+      <div class="quote-block">
+        "The climb is never over. There is a more beautiful mountain over the horizon."
+        <cite>— PJ HRADILEK</cite>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="reveal">
+      <div class="tag">// GET IN TOUCH</div>
+      <h2 class="display" style="font-size:clamp(30px,4vw,48px);margin-bottom:16px;">Make An Inquiry</h2>
+      <p style="color:var(--concrete);max-width:520px;margin-bottom:40px;">Questions about training, rates, or Mind Forward — send it over and you'll hear back directly.</p>
+      <form name="contact" method="POST" data-netlify="true" style="max-width:560px;display:flex;flex-direction:column;gap:20px;">
+        <input type="hidden" name="form-name" value="contact">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label class="mono" for="cf-name" style="font-size:11.5px;letter-spacing:0.06em;color:var(--concrete);">NAME</label>
+          <input id="cf-name" name="name" type="text" required
+            style="background:transparent;border:1px solid var(--line);color:var(--bone);padding:14px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label class="mono" for="cf-email" style="font-size:11.5px;letter-spacing:0.06em;color:var(--concrete);">EMAIL</label>
+          <input id="cf-email" name="email" type="email" required
+            style="background:transparent;border:1px solid var(--line);color:var(--bone);padding:14px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label class="mono" for="cf-message" style="font-size:11.5px;letter-spacing:0.06em;color:var(--concrete);">MESSAGE</label>
+          <textarea id="cf-message" name="message" rows="5" required
+            style="background:transparent;border:1px solid var(--line);color:var(--bone);padding:14px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;resize:vertical;"></textarea>
+        </div>
+        <button type="submit" class="btn primary" style="border:none;cursor:pointer;width:fit-content;">SEND INQUIRY</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mono">FITNESSBRAINIAC@GMAIL.COM<br>30125 AGOURA RD #H, AGOURA HILLS, CA 91301</div>
+    <div class="mono">© 2026 FITNESS BRAINIAC — DESIGN CONCEPT V2</div>
+  </footer>
+
+<script>
+  const tickerItems = [
+    { text: 'DISCIPLINE', delta: '+2.4%', dir: 'up' },
+    { text: 'EXCUSES', delta: '−18.0%', dir: 'down' },
+    { text: 'ENERGY', delta: '+5.6%', dir: 'up' },
+    { text: 'PAIN', delta: '−14.2%', dir: 'down' },
+    { text: 'MOBILITY', delta: '+3.8%', dir: 'up' },
+    { text: 'FAT', delta: '−8.9%', dir: 'down' },
+    { text: 'SLEEP QUALITY', delta: '+6.1%', dir: 'up' },
+    { text: 'MIND FORWARD — SEASONAL ENROLLMENT OPEN', delta: '', dir: 'flat' },
+    { text: 'MUSCLE', delta: '+7.3%', dir: 'up' },
+    { text: 'RESISTANCE TO CHANGE', delta: '−9.2%', dir: 'down' },
+    { text: 'CONSTITUTION', delta: '+4.9%', dir: 'up' },
+    { text: '23 YRS EXPERIENCE', delta: 'HOLDING', dir: 'flat' },
+    { text: 'ATHLETICISM', delta: '+6.7%', dir: 'up' },
+    { text: 'HAVE YOU INVESTED IN YOURSELF?', delta: '', dir: 'callout' },
+    { text: 'DEPRESSION', delta: '−16.5%', dir: 'down' },
+    { text: 'CONSISTENCY', delta: '+11.3%', dir: 'up' },
+    { text: 'STRESS', delta: '−10.8%', dir: 'down' },
+    { text: 'NERVOUS SYSTEM RESILIENCE', delta: '+4.7%', dir: 'up' },
+    { text: 'CONFIDENCE', delta: '+9.4%', dir: 'up' },
+    { text: 'RECOVERY TIME', delta: '−7.5%', dir: 'down' },
+    { text: 'VO2 MAX', delta: '+5.2%', dir: 'up' },
+  ];
+  function buildTicker(){
+    const track = document.getElementById('tickerTrack');
+    const seq = [...tickerItems, ...tickerItems];
+    track.innerHTML = seq.map(item => {
+      if(item.dir === 'callout') return `<div class="ticker-item callout">${item.text}</div>`;
+      const cls = item.dir === 'up' ? 'up' : item.dir === 'down' ? 'down' : '';
+      return `<div class="ticker-item"><span>${item.text}</span>${item.delta ? `<span class="${cls}">${item.delta}</span>` : ''}</div>`;
+    }).join('');
+  }
+  buildTicker();
+
+  // Hero caption rotates by day of week — Sunday=0 ... Saturday=6
+  const heroCaptions = [
+    'BECOME WHO<br>TOMORROW <span class="out">NEEDS</span>',       // Sunday
+    'THE CLIMB<br>IS NEVER <span class="out">OVER</span>',          // Monday
+    'DISCIPLINE<br>BEATS <span class="out">MOTIVATION</span>',      // Tuesday
+    'PAIN IS<br>JUST <span class="out">DATA</span>',                // Wednesday
+    'BUILD THE<br>UNSEEN <span class="out">HOURS</span>',           // Thursday
+    'EARN YOUR<br><span class="out">REST</span>',                   // Friday
+    'SHOW UP<br><span class="out">ANYWAY</span>',                   // Saturday
+  ];
+  const heroEl = document.getElementById('heroCaption');
+  if(heroEl){
+    const today = new Date().getDay();
+    heroEl.innerHTML = heroCaptions[today];
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Parallax: each layer moves at its own rate, nearest layers fastest.
+  const parallaxLayers = [
+    { el: document.querySelector('.l-sky'),     speed: 0.02 },
+    { el: document.querySelector('.l-mtn-bg'),  speed: 0.05 },
+    { el: document.querySelector('.l-fog-far'), speed: 0.07 },
+    { el: document.querySelector('.l-mtn-fg'),  speed: 0.10 },
+    { el: document.querySelector('.l-fog-near'),speed: 0.13 },
+    { el: document.querySelector('.l-ground'),  speed: 0.17 },
+  ];
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    parallaxLayers.forEach(l => { if(l.el) l.el.style.transform = `translateY(${y * l.speed}px)`; });
+  }, { passive: true });
+</script>
+</body>
+</html>

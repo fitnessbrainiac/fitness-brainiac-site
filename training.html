@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Rates — Fitness Brainiac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#07070B;--ink-2:#12111C;--bone:#EDEAE2;--concrete:#9092A8;
+    --blue:#5B7FFF;--purple:#9D5CFF;--red:#FF4438;--amber:#FFB020;
+    --line:rgba(237,234,226,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--ink);color:var(--bone);font-family:'IBM Plex Sans',sans-serif;overflow-x:hidden;}
+  .display{font-family:'Archivo Black',sans-serif;text-transform:uppercase;line-height:0.92;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- TICKER (shared) ---------- */
+  .ticker-wrap{position:sticky;top:0;z-index:100;background:var(--ink-2);border-bottom:1px solid var(--line);overflow:hidden;height:40px;display:flex;align-items:center;}
+  .ticker-track{display:flex;white-space:nowrap;animation:scroll-ticker 68s linear infinite;}
+  @keyframes scroll-ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .ticker-item{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;padding:0 28px;display:flex;align-items:center;gap:8px;color:var(--concrete);border-right:1px solid var(--line);}
+  .ticker-item .up{color:var(--blue);}
+  .ticker-item .down{color:var(--red);}
+  .ticker-item.callout{color:var(--amber);font-weight:600;letter-spacing:0.08em;text-shadow:0 0 14px rgba(255,176,32,0.45);}
+
+  /* ---------- NAV (shared) ---------- */
+  nav{display:flex;justify-content:space-between;align-items:center;padding:22px 5vw;border-bottom:1px solid var(--line);position:relative;z-index:5;}
+  .logo{font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:0.02em;}
+  .logo span{color:var(--blue);}
+  .navlinks{display:flex;gap:32px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;color:var(--concrete);}
+  .navlinks a{color:var(--concrete);text-decoration:none;position:relative;}
+  .navlinks a.active{color:var(--bone);}
+  .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--blue);transition:width .3s ease;}
+  .navlinks a:hover{color:var(--bone);}
+  .navlinks a:hover::after, .navlinks a.active::after{width:100%;}
+
+  /* ---------- SLIM BANNER (subpage hero) ---------- */
+  .banner{position:relative;min-height:46vh;display:flex;flex-direction:column;justify-content:flex-end;padding:60px 5vw 70px;overflow:hidden;background:#050508;}
+  .layer{position:absolute;left:-4%;right:-4%;background-repeat:no-repeat;}
+  .l-mtn-bg{bottom:0;height:80%;background-image:url('assets/mountains-bg.png');background-size:cover;background-position:bottom center;opacity:0.7;}
+  .l-fog{bottom:0;height:60%;background-image:url('assets/fog-far.jpg');background-size:cover;background-position:bottom center;
+      mix-blend-mode:screen;opacity:0.75;animation:fog-drift 70s linear infinite alternate, fog-pulse 42s ease-in-out infinite;}
+  @keyframes fog-drift{from{background-position:44% bottom;}to{background-position:56% bottom;}}
+  @keyframes fog-pulse{0%,55%{opacity:0.7;}68%{opacity:0.25;}80%,100%{opacity:0.7;}}
+  .banner-content{position:relative;z-index:2;}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--amber);margin-bottom:14px;}
+  h1.display{font-size:clamp(38px,6vw,72px);}
+
+  /* ---------- SECTION ---------- */
+  section{padding:90px 5vw 120px;position:relative;z-index:1;background:var(--ink);}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease, transform .8s ease;}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+
+  /* ---------- TOGGLE ---------- */
+  .toggle-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:56px;}
+  .toggle-label{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;color:var(--concrete);}
+  .toggle-label.on{color:var(--bone);}
+  .toggle-switch{position:relative;width:64px;height:32px;border:1px solid var(--bone);cursor:pointer;background:transparent;padding:0;}
+  .toggle-knob{position:absolute;top:3px;left:3px;width:24px;height:24px;background:var(--bone);transition:transform .28s cubic-bezier(.4,0,.2,1), background .28s ease;}
+  .toggle-switch.half .toggle-knob{transform:translateX(30px);background:var(--blue);}
+  .duration-note{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--blue);letter-spacing:0.04em;}
+
+  .price-category{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--concrete);margin:44px 0 18px;padding-top:30px;border-top:1px solid var(--line);}
+  .price-category:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+  .price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);}
+  .price-card{background:var(--ink);padding:32px 26px;transition:transform .3s ease, box-shadow .3s ease;position:relative;}
+  .price-card:hover{transform:translate(-6px,-6px);box-shadow:6px 6px 0 var(--purple);z-index:2;}
+  .price-card .plabel{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--amber);letter-spacing:0.08em;margin-bottom:14px;}
+  .price-card h3{font-family:'Archivo Black',sans-serif;font-size:19px;text-transform:uppercase;margin-bottom:8px;}
+  .price-card .amt{font-family:'IBM Plex Mono',monospace;font-size:27px;color:var(--bone);margin:16px 0 6px;transition:opacity .15s ease;}
+  .price-card .per{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--concrete);transition:opacity .15s ease;}
+  .fading{opacity:0;}
+
+  .btn{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.05em;padding:15px 26px;border:1px solid var(--bone);color:var(--bone);text-decoration:none;transition:all .25s ease;display:inline-block;margin-top:50px;}
+  .btn:hover{transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--blue);border-color:var(--blue);color:var(--blue);}
+
+  footer{padding:60px 5vw;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;background:var(--ink);border-top:1px solid var(--line);}
+  footer .mono{font-size:12px;color:var(--concrete);letter-spacing:0.04em;}
+
+  @media (prefers-reduced-motion: reduce){.ticker-track,.l-fog{animation:none;}.reveal{opacity:1;transform:none;transition:none;}}
+</style>
+</head>
+<body>
+
+  <div class="ticker-wrap"><div class="ticker-track" id="tickerTrack"></div></div>
+
+  <nav>
+    <div class="logo">FITNESS <span>BRAINIAC</span></div>
+    <div class="navlinks">
+      <a href="about.html">ABOUT</a>
+      <a href="training.html" class="active">TRAINING</a>
+      <a href="mind-forward.html">MIND FORWARD</a>
+      <a href="index.html#contact">CONTACT</a>
+    </div>
+  </nav>
+
+  <section class="banner">
+    <div class="layer l-mtn-bg"></div>
+    <div class="layer l-fog"></div>
+    <div class="banner-content">
+      <div class="tag">// TRAINING RATES</div>
+      <h1 class="display">Invest In Yourself</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="reveal in-view">
+      <div class="toggle-row">
+        <span class="toggle-label" id="labelHour">1 HOUR</span>
+        <button class="toggle-switch" id="durationToggle" aria-label="Toggle between 1 hour and 30 minute session pricing">
+          <div class="toggle-knob"></div>
+        </button>
+        <span class="toggle-label" id="labelHalf">30 MIN</span>
+        <span class="duration-note" id="durationNote">◆ SHOWING 60-MINUTE SESSION RATES</span>
+      </div>
+
+      <div class="price-category" id="catPrivate">// PRIVATE TRAINING</div>
+      <div class="price-grid">
+        <div class="price-card" data-hour-amt="150" data-half-amt="90" data-sessions="1">
+          <div class="plabel">SINGLE SESSION</div>
+          <h3>Consultation</h3>
+          <div class="amt">$150</div>
+          <div class="per">one-time</div>
+        </div>
+        <div class="price-card" data-hour-amt="1036" data-half-amt="622" data-sessions="8">
+          <div class="plabel">8 SESSIONS</div>
+          <h3>Get Started</h3>
+          <div class="amt">$1,036</div>
+          <div class="per">$129.50 / session</div>
+        </div>
+        <div class="price-card" data-hour-amt="1439" data-half-amt="863" data-sessions="12">
+          <div class="plabel">12 SESSIONS</div>
+          <h3>Build Momentum</h3>
+          <div class="amt">$1,439</div>
+          <div class="per">$119.92 / session</div>
+        </div>
+        <div class="price-card" data-hour-amt="2620" data-half-amt="1572" data-sessions="24">
+          <div class="plabel">24 SESSIONS</div>
+          <h3>Full Commitment</h3>
+          <div class="amt">$2,620</div>
+          <div class="per">$109.17 / session</div>
+        </div>
+      </div>
+
+      <div class="price-category">// SEMI-PRIVATE TRAINING — TRAIN IN PAIRS</div>
+      <div class="price-grid">
+        <div class="price-card" data-hour-amt="1456" data-half-amt="874" data-sessions="8">
+          <div class="plabel">8 SESSIONS</div>
+          <h3>Partner Start</h3>
+          <div class="amt">$1,456</div>
+          <div class="per">$182.00 / session</div>
+        </div>
+        <div class="price-card" data-hour-amt="1984" data-half-amt="1190" data-sessions="12">
+          <div class="plabel">12 SESSIONS</div>
+          <h3>Partner Momentum</h3>
+          <div class="amt">$1,984</div>
+          <div class="per">$165.33 / session</div>
+        </div>
+        <div class="price-card" data-hour-amt="3583" data-half-amt="2150" data-sessions="24">
+          <div class="plabel">24 SESSIONS</div>
+          <h3>Partner Commitment</h3>
+          <div class="amt">$3,583</div>
+          <div class="per">$149.29 / session</div>
+        </div>
+      </div>
+
+      <a class="btn" href="index.html#contact">GET IN TOUCH</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mono">FITNESSBRAINIAC@GMAIL.COM<br>30125 AGOURA RD #H, AGOURA HILLS, CA 91301</div>
+    <div class="mono">© 2026 FITNESS BRAINIAC</div>
+  </footer>
+
+<script>
+  const tickerItems = [
+    { text: 'DISCIPLINE', delta: '+2.4%', dir: 'up' },
+    { text: 'EXCUSES', delta: '−18.0%', dir: 'down' },
+    { text: 'ENERGY', delta: '+5.6%', dir: 'up' },
+    { text: 'PAIN', delta: '−14.2%', dir: 'down' },
+    { text: 'MOBILITY', delta: '+3.8%', dir: 'up' },
+    { text: 'FAT', delta: '−8.9%', dir: 'down' },
+    { text: 'SLEEP QUALITY', delta: '+6.1%', dir: 'up' },
+    { text: 'MIND FORWARD — SEASONAL ENROLLMENT OPEN', delta: '', dir: 'flat' },
+    { text: 'MUSCLE', delta: '+7.3%', dir: 'up' },
+    { text: 'RESISTANCE TO CHANGE', delta: '−9.2%', dir: 'down' },
+    { text: 'CONSTITUTION', delta: '+4.9%', dir: 'up' },
+    { text: '23 YRS EXPERIENCE', delta: 'HOLDING', dir: 'flat' },
+    { text: 'ATHLETICISM', delta: '+6.7%', dir: 'up' },
+    { text: 'HAVE YOU INVESTED IN YOURSELF?', delta: '', dir: 'callout' },
+    { text: 'DEPRESSION', delta: '−16.5%', dir: 'down' },
+    { text: 'CONSISTENCY', delta: '+11.3%', dir: 'up' },
+    { text: 'STRESS', delta: '−10.8%', dir: 'down' },
+    { text: 'NERVOUS SYSTEM RESILIENCE', delta: '+4.7%', dir: 'up' },
+    { text: 'CONFIDENCE', delta: '+9.4%', dir: 'up' },
+    { text: 'RECOVERY TIME', delta: '−7.5%', dir: 'down' },
+    { text: 'VO2 MAX', delta: '+5.2%', dir: 'up' },
+  ];
+  function buildTicker(){
+    const track = document.getElementById('tickerTrack');
+    const seq = [...tickerItems, ...tickerItems];
+    track.innerHTML = seq.map(item => {
+      if(item.dir === 'callout') return `<div class="ticker-item callout">${item.text}</div>`;
+      const cls = item.dir === 'up' ? 'up' : item.dir === 'down' ? 'down' : '';
+      return `<div class="ticker-item"><span>${item.text}</span>${item.delta ? `<span class="${cls}">${item.delta}</span>` : ''}</div>`;
+    }).join('');
+  }
+  buildTicker();
+
+  // Duration toggle: 1 hour (default) <-> 30 minutes
+  const toggle = document.getElementById('durationToggle');
+  const labelHour = document.getElementById('labelHour');
+  const labelHalf = document.getElementById('labelHalf');
+  const note = document.getElementById('durationNote');
+  const catPrivate = document.getElementById('catPrivate');
+  const cards = document.querySelectorAll('.price-card');
+  let isHalf = false;
+
+  function fmtMoney(n){ return '$' + n.toLocaleString('en-US'); }
+
+  function renderCards(){
+    cards.forEach(card => {
+      const hourAmt = parseFloat(card.dataset.hourAmt);
+      const halfAmt = parseFloat(card.dataset.halfAmt);
+      const sessions = parseInt(card.dataset.sessions, 10);
+      const amt = isHalf ? halfAmt : hourAmt;
+      const amtEl = card.querySelector('.amt');
+      const perEl = card.querySelector('.per');
+      amtEl.classList.add('fading'); perEl.classList.add('fading');
+      setTimeout(() => {
+        amtEl.textContent = fmtMoney(amt);
+        if(sessions === 1){
+          perEl.textContent = 'one-time';
+        } else {
+          const per = amt / sessions;
+          perEl.textContent = '$' + per.toFixed(2) + ' / session';
+        }
+        amtEl.classList.remove('fading'); perEl.classList.remove('fading');
+      }, 150);
+    });
+  }
+
+  toggle.addEventListener('click', () => {
+    isHalf = !isHalf;
+    toggle.classList.toggle('half', isHalf);
+    labelHour.classList.toggle('on', !isHalf);
+    labelHalf.classList.toggle('on', isHalf);
+    note.textContent = isHalf ? '◆ SHOWING 30-MINUTE SESSION RATES' : '◆ SHOWING 60-MINUTE SESSION RATES';
+    renderCards();
+  });
+
+  // init default state (1 hour)
+  labelHour.classList.add('on');
+</script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About PJ — Fitness Brainiac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#07070B;--ink-2:#12111C;--bone:#EDEAE2;--concrete:#9092A8;
+    --blue:#5B7FFF;--purple:#9D5CFF;--red:#FF4438;--amber:#FFB020;
+    --line:rgba(237,234,226,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--ink);color:var(--bone);font-family:'IBM Plex Sans',sans-serif;overflow-x:hidden;}
+  .display{font-family:'Archivo Black',sans-serif;text-transform:uppercase;line-height:0.92;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- TICKER (shared) ---------- */
+  .ticker-wrap{position:sticky;top:0;z-index:100;background:var(--ink-2);border-bottom:1px solid var(--line);overflow:hidden;height:40px;display:flex;align-items:center;}
+  .ticker-track{display:flex;white-space:nowrap;animation:scroll-ticker 68s linear infinite;}
+  @keyframes scroll-ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .ticker-item{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;padding:0 28px;display:flex;align-items:center;gap:8px;color:var(--concrete);border-right:1px solid var(--line);}
+  .ticker-item .up{color:var(--blue);}
+  .ticker-item .down{color:var(--red);}
+  .ticker-item.callout{color:var(--amber);font-weight:600;letter-spacing:0.08em;text-shadow:0 0 14px rgba(255,176,32,0.45);}
+
+  /* ---------- NAV (shared) ---------- */
+  nav{display:flex;justify-content:space-between;align-items:center;padding:22px 5vw;border-bottom:1px solid var(--line);position:relative;z-index:5;}
+  .logo{font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:0.02em;}
+  .logo span{color:var(--blue);}
+  .navlinks{display:flex;gap:32px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;color:var(--concrete);}
+  .navlinks a{color:var(--concrete);text-decoration:none;position:relative;}
+  .navlinks a.active{color:var(--bone);}
+  .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--blue);transition:width .3s ease;}
+  .navlinks a:hover{color:var(--bone);}
+  .navlinks a:hover::after, .navlinks a.active::after{width:100%;}
+
+  /* ---------- BIO HERO — minimal gradient, portrait-focused ---------- */
+  .bio-hero{
+    position:relative;min-height:88vh;display:flex;align-items:center;
+    padding:60px 5vw;overflow:hidden;
+    background:
+      radial-gradient(ellipse 60% 50% at 78% 30%, rgba(157,92,255,0.22), transparent 60%),
+      radial-gradient(ellipse 55% 45% at 15% 75%, rgba(91,127,255,0.18), transparent 60%),
+      linear-gradient(160deg, #050508 0%, #0B0A16 50%, #0F0D1C 100%);
+  }
+  .bio-grid{position:relative;z-index:2;display:grid;grid-template-columns:0.85fr 1.15fr;gap:70px;align-items:center;width:100%;max-width:1200px;margin:0 auto;}
+  .portrait-frame{
+    position:relative;aspect-ratio:6/5;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(160deg, rgba(91,127,255,0.06), rgba(157,92,255,0.06));
+    transition:transform .4s ease, box-shadow .4s ease;
+  }
+  .portrait-frame:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--purple);}
+  .portrait-frame img{width:100%;height:100%;object-fit:cover;display:block;}
+  .portrait-placeholder{text-align:center;padding:40px;color:var(--concrete);}
+  .portrait-placeholder .mono{font-size:11.5px;letter-spacing:0.08em;line-height:1.8;}
+  .portrait-corner{position:absolute;width:22px;height:22px;border:1px solid var(--blue);}
+  .portrait-corner.tl{top:-1px;left:-1px;border-right:none;border-bottom:none;}
+  .portrait-corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none;}
+
+  .bio-copy .tag{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--amber);margin-bottom:16px;}
+  .bio-copy h1.display{font-size:clamp(34px,4.5vw,58px);margin-bottom:22px;}
+  .bio-copy p{color:var(--concrete);font-size:16.5px;line-height:1.75;max-width:520px;}
+  .bio-copy p + p{margin-top:18px;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.04em;border:1px solid var(--line);padding:9px 14px;color:var(--concrete);}
+  .btn{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.05em;padding:15px 26px;border:1px solid var(--bone);color:var(--bone);text-decoration:none;transition:all .25s ease;display:inline-block;margin-top:38px;}
+  .btn:hover{transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--blue);border-color:var(--blue);color:var(--blue);}
+
+  /* ---------- SECTION ---------- */
+  section.body-section{padding:100px 5vw;position:relative;z-index:1;background:var(--ink);border-top:1px solid var(--line);}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease, transform .8s ease;}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);max-width:900px;margin:0 auto;}
+  .stat-block{background:var(--ink);padding:34px 28px;text-align:center;}
+  .stat-block .num{font-family:'Archivo Black',sans-serif;font-size:48px;color:var(--blue);line-height:1;}
+  .stat-block .lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--concrete);letter-spacing:0.08em;margin-top:10px;}
+  .quote-block{border-left:2px solid var(--purple);padding-left:24px;font-family:'Archivo Black',sans-serif;text-transform:none;font-size:clamp(20px,2.2vw,28px);line-height:1.3;color:var(--bone);max-width:700px;margin:70px auto 0;}
+  .quote-block cite{display:block;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--concrete);font-style:normal;letter-spacing:0.04em;}
+
+  footer{padding:60px 5vw;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;background:var(--ink);border-top:1px solid var(--line);}
+  footer .mono{font-size:12px;color:var(--concrete);letter-spacing:0.04em;}
+
+  @media (max-width:800px){.bio-grid{grid-template-columns:1fr;}.stat-row{grid-template-columns:1fr;}}
+  @media (prefers-reduced-motion: reduce){.ticker-track{animation:none;}.reveal{opacity:1;transform:none;transition:none;}}
+</style>
+</head>
+<body>
+
+  <div class="ticker-wrap"><div class="ticker-track" id="tickerTrack"></div></div>
+
+  <nav>
+    <div class="logo">FITNESS <span>BRAINIAC</span></div>
+    <div class="navlinks">
+      <a href="about.html" class="active">ABOUT</a>
+      <a href="training.html">TRAINING</a>
+      <a href="mind-forward.html">MIND FORWARD</a>
+      <a href="index.html#contact">CONTACT</a>
+    </div>
+  </nav>
+
+  <section class="bio-hero">
+    <div class="bio-grid">
+      <div class="portrait-frame">
+        <div class="portrait-corner tl"></div>
+        <div class="portrait-corner br"></div>
+        <!-- PJ's portrait -->
+        <img src="assets/pj-portrait.jpg" alt="PJ Hradilek, personal trainer" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
+      </div>
+      <div class="bio-copy">
+        <div class="tag">// ABOUT PJ</div>
+        <h1 class="display">Trained By Experience.<br>Sharpened By Data.</h1>
+        <p>Twenty-three years on the gym floor in and around the Conejo Valley taught me what actually works — not what's trending. I've held certifications across NASM, NCEP, NESTA, Freemotion, TRX, and MAT, and I've watched enough fads come and go to trust the fundamentals.</p>
+        <p>Outside the gym, I build and run my own local AI models — partly out of curiosity, partly because staying sharp on how information moves keeps me honest about what's actually changed in exercise science versus what's just repackaged. Every program I write blends two decades of hands-on coaching with a current, informed opinion on what moves the needle.</p>
+        <div class="chips">
+          <div class="chip">NASM</div><div class="chip">NCEP</div><div class="chip">NESTA</div>
+          <div class="chip">FREEMOTION</div><div class="chip">TRX</div><div class="chip">MAT</div>
+        </div>
+        <a class="btn" href="training.html">SEE TRAINING RATES</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="body-section">
+    <div class="reveal in-view">
+      <div class="stat-row">
+        <div class="stat-block"><div class="num">23</div><div class="lbl">YEARS ACTIVE COACHING</div></div>
+        <div class="stat-block"><div class="num">6</div><div class="lbl">CERTIFICATIONS HELD</div></div>
+        <div class="stat-block"><div class="num">∞</div><div class="lbl">NEXT MOUNTAIN</div></div>
+      </div>
+      <div class="quote-block">
+        "The climb is never over. There is a more beautiful mountain over the horizon."
+        <cite>— PJ HRADILEK</cite>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mono">FITNESSBRAINIAC@GMAIL.COM<br>30125 AGOURA RD #H, AGOURA HILLS, CA 91301</div>
+    <div class="mono">© 2026 FITNESS BRAINIAC</div>
+  </footer>
+
+<script>
+  const tickerItems = [
+    { text: 'DISCIPLINE', delta: '+2.4%', dir: 'up' },
+    { text: 'EXCUSES', delta: '−18.0%', dir: 'down' },
+    { text: 'ENERGY', delta: '+5.6%', dir: 'up' },
+    { text: 'PAIN', delta: '−14.2%', dir: 'down' },
+    { text: 'MOBILITY', delta: '+3.8%', dir: 'up' },
+    { text: 'FAT', delta: '−8.9%', dir: 'down' },
+    { text: 'SLEEP QUALITY', delta: '+6.1%', dir: 'up' },
+    { text: 'MIND FORWARD — SEASONAL ENROLLMENT OPEN', delta: '', dir: 'flat' },
+    { text: 'MUSCLE', delta: '+7.3%', dir: 'up' },
+    { text: 'RESISTANCE TO CHANGE', delta: '−9.2%', dir: 'down' },
+    { text: 'CONSTITUTION', delta: '+4.9%', dir: 'up' },
+    { text: '23 YRS EXPERIENCE', delta: 'HOLDING', dir: 'flat' },
+    { text: 'ATHLETICISM', delta: '+6.7%', dir: 'up' },
+    { text: 'HAVE YOU INVESTED IN YOURSELF?', delta: '', dir: 'callout' },
+    { text: 'DEPRESSION', delta: '−16.5%', dir: 'down' },
+    { text: 'CONSISTENCY', delta: '+11.3%', dir: 'up' },
+    { text: 'STRESS', delta: '−10.8%', dir: 'down' },
+    { text: 'NERVOUS SYSTEM RESILIENCE', delta: '+4.7%', dir: 'up' },
+    { text: 'CONFIDENCE', delta: '+9.4%', dir: 'up' },
+    { text: 'RECOVERY TIME', delta: '−7.5%', dir: 'down' },
+    { text: 'VO2 MAX', delta: '+5.2%', dir: 'up' },
+  ];
+  function buildTicker(){
+    const track = document.getElementById('tickerTrack');
+    const seq = [...tickerItems, ...tickerItems];
+    track.innerHTML = seq.map(item => {
+      if(item.dir === 'callout') return `<div class="ticker-item callout">${item.text}</div>`;
+      const cls = item.dir === 'up' ? 'up' : item.dir === 'down' ? 'down' : '';
+      return `<div class="ticker-item"><span>${item.text}</span>${item.delta ? `<span class="${cls}">${item.delta}</span>` : ''}</div>`;
+    }).join('');
+  }
+  buildTicker();
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
