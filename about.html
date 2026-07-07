@@ -3,7 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About PJ — Fitness Brainiac</title>
+<title>About PJ Hradilek — Personal Trainer, Agoura Hills</title>
+<meta name="description" content="23 years coaching in the Conejo Valley. NASM, NCEP, NESTA certified. Lecturer, R-DAT, Ninja Warrior competitor, and creator of Functional Sleep Therapy.">
+<link rel="canonical" href="https://www.fitnessbrainiac.com/about.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="About PJ Hradilek — Personal Trainer, Agoura Hills">
+<meta property="og:description" content="23 years coaching in the Conejo Valley. NASM, NCEP, NESTA certified. Lecturer, R-DAT, Ninja Warrior competitor, and creator of Functional Sleep Therapy.">
+<meta property="og:url" content="https://www.fitnessbrainiac.com/about.html">
+<meta property="og:site_name" content="Fitness Brainiac">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": ["HealthAndBeautyBusiness", "SportsActivityLocation"],
+  "@id": "https://www.fitnessbrainiac.com/#business",
+  "name": "Fitness Brainiac",
+  "description": "Private personal training studio in Agoura Hills serving the Conejo Valley — strength, fat loss, postural correction, pain mitigation, pre/post-natal, and body recomposition, plus the Mind Forward wellness program.",
+  "url": "https://www.fitnessbrainiac.com/",
+  "telephone": "+18059018426",
+  "email": "fitnessbrainiac@gmail.com",
+  "founder": { "@type": "Person", "name": "PJ Hradilek", "jobTitle": "Personal Trainer" },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "30125 Agoura Rd #H",
+    "addressLocality": "Agoura Hills",
+    "addressRegion": "CA",
+    "postalCode": "91301",
+    "addressCountry": "US"
+  },
+  "areaServed": [
+    { "@type": "City", "name": "Agoura Hills" },
+    { "@type": "City", "name": "Oak Park" },
+    { "@type": "City", "name": "Lake Sherwood" },
+    { "@type": "City", "name": "Calabasas" },
+    { "@type": "City", "name": "Westlake Village" },
+    { "@type": "City", "name": "Thousand Oaks" },
+    { "@type": "City", "name": "Newbury Park" },
+    { "@type": "City", "name": "Malibu" }
+  ],
+  "knowsLanguage": ["en", "es", "pt"],
+  "priceRange": "$$"
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -144,6 +185,32 @@
   .form-grid input,.form-grid textarea{width:100%;background:rgba(7,7,11,0.6);border:1px solid var(--line);color:var(--bone);padding:14px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;}
   .form-grid textarea{resize:vertical;}
 
+  /* Phone: flip to reveal number, then press-and-hold to open Messages */
+  .phone-flip{display:inline-block;perspective:600px;background:none;border:none;padding:0;cursor:pointer;margin-bottom:40px;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+  .phone-flip-inner{position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;min-width:250px;height:52px;}
+  .phone-flip.revealed .phone-flip-inner{transform:rotateX(180deg);}
+  .phone-face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--bone);font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:0.05em;color:var(--bone);overflow:hidden;}
+  .phone-face.back{transform:rotateX(180deg);background:var(--bone);color:var(--ink);border-color:var(--bone);font-size:17px;letter-spacing:0.06em;}
+  .phone-face .num-label{position:relative;z-index:2;}
+  .hold-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--blue);z-index:1;}
+  .phone-face.back .num-label{transition:color .2s ease;}
+  .phone-flip.holding .phone-face.back .num-label{color:var(--bone);}
+  .hold-hint{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:var(--concrete);margin-top:-30px;margin-bottom:40px;height:14px;transition:opacity .3s ease;opacity:0;}
+  .hold-hint.show{opacity:1;}
+
+  /* Desktop text-request panel (shown when no SMS app is available) */
+  .textreq{display:none;margin:-16px 0 40px;max-width:440px;border:1px solid var(--line);background:rgba(9,9,14,0.92);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);padding:28px 26px;}
+  .textreq.show{display:block;animation:tr-in .35s ease;}
+  @keyframes tr-in{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  .textreq h4{font-family:'Archivo Black',sans-serif;font-size:16px;text-transform:uppercase;margin-bottom:8px;}
+  .textreq p{color:var(--concrete);font-size:13.5px;line-height:1.6;margin-bottom:20px;}
+  .textreq label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--concrete);display:block;margin-bottom:7px;}
+  .textreq input,.textreq select{width:100%;background:rgba(7,7,11,0.6);border:1px solid var(--line);color:var(--bone);padding:12px 14px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;margin-bottom:16px;}
+  .textreq select{cursor:pointer;}
+  .textreq .tr-actions{display:flex;gap:12px;align-items:center;}
+  .textreq .tr-sent{color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;display:none;}
+  .textreq .tr-cancel{background:none;border:none;color:var(--concrete);font-family:'IBM Plex Mono',monospace;font-size:12px;cursor:pointer;text-decoration:underline;}
+
   footer.band{padding-top:0;}
   .footer-panel{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;}
   .footer-panel .mono{font-size:12px;color:var(--concrete);letter-spacing:0.04em;line-height:1.7;}
@@ -160,6 +227,32 @@
     .reveal{opacity:1;transform:none;transition:none;}
     img.layer,.fog-wrap{transform:none !important;}
   }
+
+  /* ============ FITNESS BRAINIAC RADIO ============ */
+  .radio{position:fixed;right:20px;bottom:20px;z-index:200;font-family:'IBM Plex Mono',monospace;}
+  .radio-btn{display:flex;align-items:center;gap:10px;background:rgba(18,17,28,0.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--bone);padding:11px 16px 11px 13px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.05em;transition:border-color .25s ease, box-shadow .25s ease;}
+  .radio-btn:hover{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue);}
+  .radio-btn.on{border-color:var(--amber);box-shadow:0 0 16px rgba(255,176,32,0.3);}
+  .radio-dish{width:22px;height:22px;flex:none;color:var(--concrete);transition:color .25s ease;}
+  .radio-btn:hover .radio-dish{color:var(--blue);}
+  .radio-btn.on .radio-dish{color:var(--amber);}
+  .radio-label{white-space:nowrap;}
+  .radio-status{font-size:10px;color:var(--concrete);letter-spacing:0.08em;}
+  .radio-btn.on .radio-status{color:var(--amber);}
+  /* three concentric wave arcs: static when off, sequential outward pulse when on */
+  .radio-wave{transform-origin:15px 30px;}
+  .radio-btn.on .radio-wave{animation:radio-emit 1.8s ease-out infinite;}
+  .radio-btn.on .radio-wave.w2{animation-delay:.3s;}
+  .radio-btn.on .radio-wave.w3{animation-delay:.6s;}
+  @keyframes radio-emit{0%{opacity:0.25;}30%{opacity:1;}100%{opacity:0.25;}}
+  /* hidden YouTube player — present for audio, visually offscreen (official IFrame API) */
+  .radio-player{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;left:-9999px;}
+  @media (max-width:600px){
+    .radio{right:12px;bottom:12px;}
+    .radio-label{display:none;}
+    .radio-btn{padding:11px 13px;}
+  }
+  @media (prefers-reduced-motion: reduce){ .radio-btn.on .radio-wave{animation:none;opacity:1;} }
 </style>
 </head>
 <body>
@@ -239,10 +332,15 @@
             <div class="body-copy">
               <p>Twenty-three years on the gym floor in and around the Conejo Valley taught me what actually works — not what's trending. I've held certifications across NASM, NCEP, NESTA, Freemotion, TRX, and MAT, and I've watched enough fads come and go to trust the fundamentals.</p>
               <p style="margin-top:18px;">Outside the gym, I build and run my own local AI models — partly out of curiosity, partly because staying sharp on how information moves keeps me honest about what's actually changed in exercise science versus what's just repackaged. Every program I write blends two decades of hands-on coaching with a current, informed opinion on what moves the needle.</p>
+              <p style="margin-top:18px;">I'm also an experienced lecturer — the Mind Forward program grew out of years of speaking on wellness, habit change, and the mind-body connection. Earlier in my career I was licensed as an R-DAT (Recovery Drug and Alcohol Technician) at a local wellness facility, working directly with people in recovery. That work shaped how I coach: real change is rarely about willpower alone, and the mental side matters as much as the physical.</p>
+              <p style="margin-top:18px;">The range of people I work with is wide by design — from fall-hazard clients rebuilding stability, to pre- and post-natal training, to competitive calisthenics athletes. I coach postural correction, pain mitigation, power, strength, and strategic body recomposition. Whatever the starting point, the plan is built around where you actually are and where you're trying to go.</p>
             </div>
             <div class="chips">
               <div class="chip">NASM</div><div class="chip">NCEP</div><div class="chip">NESTA</div>
               <div class="chip">FREEMOTION</div><div class="chip">TRX</div><div class="chip">MAT</div>
+              <div class="chip">FLUENT IN SPANISH &amp; PORTUGUESE</div><div class="chip">AUTISM PARENT</div>
+              <div class="chip">R-DAT (RECOVERY TECH)</div><div class="chip">NINJA WARRIOR COMPETITOR</div>
+              <div class="chip">CREATOR OF FUNCTIONAL SLEEP THERAPY</div>
             </div>
             <a class="btn" href="training.html" style="margin-top:36px;">SEE TRAINING RATES</a>
           </div>
@@ -270,6 +368,21 @@
         <div class="mono">© 2026 FITNESS BRAINIAC</div>
       </div>
     </footer>
+    <div class="radio">
+      <button type="button" class="radio-btn" id="radioBtn" aria-label="Toggle Fitness Brainiac Radio" aria-pressed="false">
+        <svg class="radio-dish" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+          <g transform="translate(15,30) rotate(-38)">
+            <circle class="radio-origin" cx="0" cy="0" r="2.4" fill="currentColor" stroke="none"/>
+            <path class="radio-wave w1" d="M0 -8.8 A 8.8 8.8 0 0 1 8.8 0"/>
+            <path class="radio-wave w2" d="M0 -16.5 A 16.5 16.5 0 0 1 16.5 0"/>
+            <path class="radio-wave w3" d="M0 -24.2 A 24.2 24.2 0 0 1 24.2 0"/>
+          </g>
+        </svg>
+        <span class="radio-label">FITNESS BRAINIAC RADIO</span>
+        <span class="radio-status" id="radioStatus">OFF</span>
+      </button>
+      <div class="radio-player" id="radioPlayer" aria-hidden="true"></div>
+    </div>
   </div>
 <script>
   // Descent parallax: each layer interpolates from data-from%% to data-to%% (of its own height)
@@ -313,6 +426,54 @@
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
   })();
-</script>
+
+  // Fitness Brainiac Radio — official YouTube IFrame API, off by default.
+  (function(){
+    var btn = document.getElementById('radioBtn');
+    var statusEl = document.getElementById('radioStatus');
+    if (!btn) return;
+    var VIDEO_ID = 'd8Oc90QevaI';   // Monstercat Silk 24/7 live stream
+    var player = null, ready = false, playing = false, pending = false;
+
+    function loadAPI(){
+      if (window.YT && window.YT.Player) { initPlayer(); return; }
+      if (!document.getElementById('yt-iframe-api')){
+        var s = document.createElement('script');
+        s.id = 'yt-iframe-api';
+        s.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(s);
+      }
+      var prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function(){ if (typeof prev === 'function') prev(); initPlayer(); };
+    }
+    function initPlayer(){
+      player = new YT.Player('radioPlayer', {
+        videoId: VIDEO_ID,
+        playerVars: { autoplay: 0, controls: 0, disablekb: 1, playsinline: 1 },
+        events: {
+          onReady: function(){ ready = true; if (pending){ pending = false; play(); } },
+          onStateChange: function(e){
+            if (e.data === YT.PlayerState.PLAYING) setOn(true);
+            else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) setOn(false);
+          },
+          onError: function(){ statusEl.textContent = 'OFFLINE'; setOn(false); }
+        }
+      });
+    }
+    function setOn(on){
+      playing = on;
+      btn.classList.toggle('on', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      statusEl.textContent = on ? 'ON AIR' : 'OFF';
+    }
+    function play(){ if (player && player.playVideo){ player.setVolume(60); player.playVideo(); } }
+    function stop(){ if (player && player.pauseVideo){ player.pauseVideo(); } }
+
+    btn.addEventListener('click', function(){
+      if (!player){ pending = true; statusEl.textContent = '...'; loadAPI(); return; }
+      if (!ready){ pending = true; return; }
+      if (playing) stop(); else play();
+    });
+  })();</script>
 </body>
 </html>
