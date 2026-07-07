@@ -395,9 +395,11 @@
         <div class="textreq" id="textReq">
           <h4>Have PJ Reach Out</h4>
           <p>No texting app detected on this device. Leave your details and PJ will get back to you directly.</p>
-          <form name="text-request" method="POST" data-netlify="true" id="textReqForm">
-            <input type="hidden" name="form-name" value="text-request">
+          <form action="https://api.web3forms.com/submit" method="POST" id="textReqForm">
+            <input type="hidden" name="access_key" value="e598a2d0-d123-4f67-8634-fdf75e8dbc06">
             <input type="hidden" name="subject" value="TEXT REQUESTED">
+            <input type="hidden" name="from_name" value="Fitness Brainiac Website">
+            <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
             <label for="tr-name">YOUR NAME</label>
             <input id="tr-name" name="name" type="text" required>
             <label for="tr-contact">PHONE OR EMAIL</label>
@@ -415,12 +417,16 @@
             </div>
           </form>
         </div>
-        <form name="contact" method="POST" data-netlify="true" class="form-grid">
-          <input type="hidden" name="form-name" value="contact">
+        <form action="https://api.web3forms.com/submit" method="POST" class="form-grid" id="contactForm">
+          <input type="hidden" name="access_key" value="e598a2d0-d123-4f67-8634-fdf75e8dbc06">
+          <input type="hidden" name="subject" value="New inquiry — Fitness Brainiac">
+          <input type="hidden" name="from_name" value="Fitness Brainiac Website">
+          <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
           <div><label for="cf-name">NAME</label><input id="cf-name" name="name" type="text" required></div>
           <div><label for="cf-email">EMAIL</label><input id="cf-email" name="email" type="email" required></div>
           <div><label for="cf-message">MESSAGE</label><textarea id="cf-message" name="message" rows="5" required></textarea></div>
           <button type="submit" class="btn primary" style="width:fit-content;">SEND INQUIRY</button>
+          <span class="tr-sent" id="contactSent" style="display:none;color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;">&#10003; SENT — PJ WILL BE IN TOUCH</span>
         </form>
       </div>
     </section>
@@ -490,13 +496,16 @@
     document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
   })();
 
-  // Fitness Brainiac Radio — official YouTube IFrame API, off by default.
+  // Fitness Brainiac Radio — official YouTube IFrame API. Persists on/off across pages via cookie.
   (function(){
     var btn = document.getElementById('radioBtn');
     var statusEl = document.getElementById('radioStatus');
     if (!btn) return;
     var VIDEO_ID = 'd8Oc90QevaI';   // Monstercat Silk 24/7 live stream
     var player = null, ready = false, playing = false, pending = false;
+
+    function setCookie(v){ document.cookie = 'fbRadio=' + v + ';path=/;max-age=' + (60*60*24*7) + ';SameSite=Lax'; }
+    function wantsOn(){ return document.cookie.split(';').some(function(c){ return c.trim() === 'fbRadio=on'; }); }
 
     function loadAPI(){
       if (window.YT && window.YT.Player) { initPlayer(); return; }
@@ -529,14 +538,21 @@
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
       statusEl.textContent = on ? 'ON AIR' : 'OFF';
     }
-    function play(){ if (player && player.playVideo){ player.setVolume(60); player.playVideo(); } }
-    function stop(){ if (player && player.pauseVideo){ player.pauseVideo(); } }
+    function play(){ if (player && player.playVideo){ player.setVolume(60); player.playVideo(); } setCookie('on'); }
+    function stop(){ if (player && player.pauseVideo){ player.pauseVideo(); } setCookie('off'); }
 
     btn.addEventListener('click', function(){
       if (!player){ pending = true; statusEl.textContent = '...'; loadAPI(); return; }
       if (!ready){ pending = true; return; }
       if (playing) stop(); else play();
     });
+
+    // Resume across navigation: if the radio was on, auto-start on this page.
+    if (wantsOn()){
+      statusEl.textContent = '...';
+      pending = true;
+      loadAPI();
+    }
   })();
   // Phone: tap reveals number; press-and-hold 3.5s -> mobile opens Messages,
   // desktop (no SMS app) opens a styled "have PJ reach out" panel. Auto-reverts after 6s idle.
@@ -627,15 +643,47 @@
       panel.classList.remove('show'); revertFlip();
     });
 
-    // Submit the text-request via Netlify (AJAX) so we can show inline confirmation.
+    // Submit the text-request via Web3Forms (AJAX) so we can show inline confirmation.
     if (form) form.addEventListener('submit', function(e){
       e.preventDefault();
-      var data = new URLSearchParams(new FormData(form)).toString();
-      fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:data })
-        .then(function(){
-          form.querySelector('.btn').style.display = 'none';
-          if (cancelBtn) cancelBtn.style.display = 'none';
-          if (sent) sent.style.display = 'inline';
+      var payload = {};
+      new FormData(form).forEach(function(v,k){ payload[k] = v; });
+      fetch('https://api.web3forms.com/submit', {
+        method:'POST',
+        headers:{'Content-Type':'application/json', 'Accept':'application/json'},
+        body: JSON.stringify(payload)
+      }).then(function(r){ return r.json(); })
+        .then(function(res){
+          if (res.success){
+            form.querySelector('.btn').style.display = 'none';
+            if (cancelBtn) cancelBtn.style.display = 'none';
+            if (sent) sent.style.display = 'inline';
+          } else { form.submit(); }
+        })
+        .catch(function(){ form.submit(); });
+    });
+  })();
+
+  // Main contact form -> Web3Forms with inline confirmation.
+  (function(){
+    var form = document.getElementById('contactForm');
+    var sent = document.getElementById('contactSent');
+    if (!form) return;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var payload = {};
+      new FormData(form).forEach(function(v,k){ payload[k] = v; });
+      fetch('https://api.web3forms.com/submit', {
+        method:'POST',
+        headers:{'Content-Type':'application/json', 'Accept':'application/json'},
+        body: JSON.stringify(payload)
+      }).then(function(r){ return r.json(); })
+        .then(function(res){
+          if (res.success){
+            form.querySelector('.btn').style.display = 'none';
+            if (sent) sent.style.display = 'inline';
+            form.reset();
+          } else { form.submit(); }
         })
         .catch(function(){ form.submit(); });
     });

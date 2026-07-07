@@ -440,13 +440,16 @@
     document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
   })();
 
-  // Fitness Brainiac Radio — official YouTube IFrame API, off by default.
+  // Fitness Brainiac Radio — official YouTube IFrame API. Persists on/off across pages via cookie.
   (function(){
     var btn = document.getElementById('radioBtn');
     var statusEl = document.getElementById('radioStatus');
     if (!btn) return;
     var VIDEO_ID = 'd8Oc90QevaI';   // Monstercat Silk 24/7 live stream
     var player = null, ready = false, playing = false, pending = false;
+
+    function setCookie(v){ document.cookie = 'fbRadio=' + v + ';path=/;max-age=' + (60*60*24*7) + ';SameSite=Lax'; }
+    function wantsOn(){ return document.cookie.split(';').some(function(c){ return c.trim() === 'fbRadio=on'; }); }
 
     function loadAPI(){
       if (window.YT && window.YT.Player) { initPlayer(); return; }
@@ -479,14 +482,21 @@
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
       statusEl.textContent = on ? 'ON AIR' : 'OFF';
     }
-    function play(){ if (player && player.playVideo){ player.setVolume(60); player.playVideo(); } }
-    function stop(){ if (player && player.pauseVideo){ player.pauseVideo(); } }
+    function play(){ if (player && player.playVideo){ player.setVolume(60); player.playVideo(); } setCookie('on'); }
+    function stop(){ if (player && player.pauseVideo){ player.pauseVideo(); } setCookie('off'); }
 
     btn.addEventListener('click', function(){
       if (!player){ pending = true; statusEl.textContent = '...'; loadAPI(); return; }
       if (!ready){ pending = true; return; }
       if (playing) stop(); else play();
     });
+
+    // Resume across navigation: if the radio was on, auto-start on this page.
+    if (wantsOn()){
+      statusEl.textContent = '...';
+      pending = true;
+      loadAPI();
+    }
   })();</script>
 </body>
 </html>
