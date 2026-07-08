@@ -109,13 +109,20 @@
   h1.display{font-size:clamp(44px,7.5vw,100px);letter-spacing:-0.01em;text-shadow:0 4px 28px rgba(0,0,0,0.8);}
   h1.display .out{-webkit-text-stroke:1.5px var(--bone);color:transparent;}
   .hero-sub{margin-top:26px;max-width:540px;font-size:17px;line-height:1.65;color:#D8D6E8;text-shadow:0 2px 14px rgba(0,0,0,0.85);}
-  .hero-cta{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap;}
+  .hero-cta-wrap{display:inline-flex;flex-direction:column;gap:16px;align-items:stretch;margin-top:44px;}
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;}
 
   /* ============ BUTTONS ============ */
   .btn{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.05em;padding:15px 26px;border:1px solid var(--bone);color:var(--bone);text-decoration:none;transition:all .25s ease;display:inline-block;background:rgba(7,7,11,0.5);cursor:pointer;}
   .btn.primary{background:var(--bone);color:var(--ink);}
   .btn.primary:hover{background:var(--blue);border-color:var(--blue);color:#050508;transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--purple);}
   .btn.ghost:hover{transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--blue);border-color:var(--blue);color:var(--blue);}
+  .btn.bodyfat{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:9px;width:100%;text-align:center;border-color:rgba(91,127,255,0.55);}
+  .btn.bodyfat .bf-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 10px var(--blue);flex:none;}
+  .btn.bodyfat span.bf-label{position:relative;z-index:2;}
+  .btn.bodyfat::after{content:'';position:absolute;top:0;left:0;height:100%;width:55%;background:linear-gradient(100deg,transparent,rgba(180,200,255,0.33) 50%,transparent);transform:translateX(-200%) skewX(-18deg);animation:bf-sheen 15s ease-in-out infinite;pointer-events:none;z-index:1;}
+  @keyframes bf-sheen{0%{transform:translateX(-200%) skewX(-18deg);}7%{transform:translateX(260%) skewX(-18deg);}100%{transform:translateX(260%) skewX(-18deg);}}
+  @media (prefers-reduced-motion:reduce){.btn.bodyfat::after{display:none;}}
 
   /* ============ PANELS & SECTIONS ============ */
   section.band{padding:70px 5vw;}
@@ -324,9 +331,12 @@
         <div class="eyebrow">PJ HRADILEK — 23 YEARS COACHING · AGOURA HILLS, CA</div>
         <h1 class="display" id="heroCaption">THE CLIMB<br>IS NEVER <span class="out">OVER</span></h1>
         <p class="hero-sub">There's always a more beautiful mountain over the horizon. Every program is built on two decades of coaching, refined with the same rigor I put into the AI systems I build in my own time — so the plan you get is current, tested, and yours.</p>
-        <div class="hero-cta">
-          <a class="btn primary" href="training.html">SEE TRAINING RATES</a>
-          <a class="btn ghost" href="about.html">MEET PJ</a>
+        <div class="hero-cta-wrap">
+          <div class="hero-cta">
+            <a class="btn primary" href="training.html">SEE TRAINING RATES</a>
+            <a class="btn ghost" href="about.html">MEET PJ</a>
+          </div>
+          <a class="btn ghost bodyfat" href="body-fat-calculator.html"><span class="bf-dot"></span><span class="bf-label">BODY FAT CALCULATOR</span></a>
         </div>
       </div>
     </section>

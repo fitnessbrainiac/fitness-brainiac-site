@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Body Fat Analysis — Fitness Brainiac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,800;0,900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05060f; --panel:rgba(16,20,44,0.72); --panel-2:rgba(24,29,58,0.55);
+    --edge:rgba(120,150,255,0.16); --edge-hot:rgba(120,150,255,0.45);
+    --ink:#eef1ff; --ink-dim:#8f98c4; --ink-faint:#5b628c;
+    --blue:#3e74ff; --electric:#4ad9ff; --violet:#8b5cf6; --magenta:#e0459b;
+    --ok:#33d9a6;
+    --grad:linear-gradient(100deg,var(--electric) 0%,var(--blue) 38%,var(--violet) 72%,var(--magenta) 100%);
+    --glow:0 0 32px rgba(74,217,255,0.25);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 15% -10%,rgba(62,116,255,0.14),transparent 60%),
+      radial-gradient(1000px 700px at 100% 0%,rgba(139,92,246,0.12),transparent 55%),
+      var(--void);
+    color:var(--ink);font-family:"Archivo",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+    display:flex;justify-content:center;padding:clamp(16px,4vw,56px);
+  }
+  .instrument{
+    width:100%;max-width:940px;background:var(--panel);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--edge);border-radius:4px;overflow:hidden;
+    box-shadow:0 40px 120px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  /* Header */
+  .head{padding:clamp(22px,3.5vw,36px) clamp(22px,4vw,44px);border-bottom:1px solid var(--edge);position:relative;}
+  .head::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:38%;background:var(--grad);}
+  .eyebrow{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;
+    color:var(--electric);margin:0 0 14px;display:flex;align-items:center;gap:10px;}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--electric);display:inline-block;}
+  h1{font-weight:900;font-size:clamp(26px,5vw,50px);line-height:0.94;letter-spacing:-0.02em;
+    text-transform:uppercase;margin:0;min-height:1.88em;}
+  h1 .thin{font-weight:400;color:var(--ink-dim);}
+  h1 .swap{display:inline-block;transition:opacity .3s,transform .3s;}
+  h1.swapping .swap{opacity:0;transform:translateY(8px);}
+  .sub{margin:14px 0 0;max-width:58ch;color:var(--ink-dim);font-size:14.5px;line-height:1.55;}
+
+  .body{padding:clamp(22px,4vw,44px);}
+
+  /* Method toggle */
+  .method-row{margin-bottom:26px;}
+  .row-controls{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-end;margin-bottom:30px;}
+  .field-label{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:0.22em;
+    text-transform:uppercase;color:var(--ink-faint);margin:0 0 9px;display:block;}
+
+  .seg{display:inline-flex;border:1px solid var(--edge);border-radius:3px;overflow:hidden;}
+  .seg input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;}
+  .seg label{padding:10px 16px;font-size:12.5px;font-weight:600;letter-spacing:0.04em;color:var(--ink-dim);
+    cursor:pointer;background:transparent;transition:background .18s,color .18s;user-select:none;text-transform:uppercase;}
+  .seg label:not(:last-of-type){border-right:1px solid var(--edge);}
+  .seg input:checked + label{color:var(--void);background:var(--electric);}
+  .seg input:focus-visible + label{outline:2px solid var(--electric);outline-offset:2px;}
+  .seg.method label{padding:11px 20px;}
+
+  .weight-wrap,.age-wrap{flex:1;min-width:150px;}
+  .field-note{font-size:10.5px;color:var(--ink-faint);margin-top:6px;font-family:"Space Mono",monospace;letter-spacing:0.04em;}
+  .input-shell{position:relative;display:flex;align-items:center;}
+  input[type="number"]{width:100%;background:var(--panel-2);border:1px solid var(--edge);border-radius:3px;
+    color:var(--ink);font-family:"Space Mono",monospace;font-size:17px;padding:12px 14px;
+    transition:border-color .18s,box-shadow .18s,opacity .2s;-moz-appearance:textfield;}
+  input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  input[type="number"]:focus{outline:none;border-color:var(--edge-hot);box-shadow:var(--glow);}
+  input[type="number"]::placeholder{color:var(--ink-faint);}
+  .input-shell.disabled input{opacity:.4;pointer-events:none;}
+  .unit-tag{position:absolute;right:12px;font-family:"Space Mono",monospace;font-size:12px;color:var(--electric);
+    letter-spacing:0.1em;pointer-events:none;}
+
+  /* Skinfold grid */
+  .grid-head{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 16px;}
+  .grid-title{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink-faint);}
+  .grid-note{font-size:12px;color:var(--ink-faint);}
+  .grid-note b{color:var(--electric);font-weight:400;font-family:"Space Mono",monospace;}
+
+  .folds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;perspective:1200px;}
+  .fold{background:var(--panel-2);border:1px solid var(--edge);border-radius:3px;padding:13px 14px 14px;
+    position:relative;transform-origin:center center;
+    transition:border-color .18s,transform .32s cubic-bezier(.2,.8,.2,1),opacity .28s;
+    backface-visibility:hidden;}
+  .fold:focus-within{border-color:var(--edge-hot);}
+  .fold.flip-out{transform:rotateY(-92deg) scale(.9);opacity:0;}
+  .fold.flip-in-start{transform:rotateY(92deg) scale(.9);opacity:0;}
+  .fold .n{font-family:"Space Mono",monospace;font-size:10px;color:var(--ink-faint);position:absolute;top:11px;right:12px;}
+  .fold label{display:block;font-weight:800;font-size:14px;letter-spacing:0.01em;text-transform:uppercase;margin-bottom:2px;padding-right:22px;}
+  .fold .desc{font-size:11px;line-height:1.4;color:var(--ink-faint);margin-bottom:11px;min-height:31px;}
+  .fold input{width:100%;background:rgba(5,6,15,0.4);border:1px solid var(--edge);border-radius:3px;color:var(--ink);
+    font-family:"Space Mono",monospace;font-size:15px;padding:9px 34px 9px 11px;}
+  .fold .mm{position:absolute;right:24px;bottom:23px;font-family:"Space Mono",monospace;font-size:11px;color:var(--ink-faint);pointer-events:none;}
+  .fold input:focus{outline:none;border-color:var(--edge-hot);box-shadow:var(--glow);}
+
+  /* Run */
+  .runbar{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:26px;}
+  .sum-tally{font-family:"Space Mono",monospace;font-size:13px;color:var(--ink-dim);letter-spacing:0.04em;}
+  .sum-tally b{color:var(--electric);font-weight:700;font-size:16px;}
+  .run{margin-left:auto;font-family:"Archivo",sans-serif;font-weight:900;font-size:15px;letter-spacing:0.08em;
+    text-transform:uppercase;color:var(--void);border:none;cursor:pointer;border-radius:3px;padding:15px 34px;
+    background:var(--grad);background-size:160% 160%;transition:transform .12s,box-shadow .2s,background-position .5s;
+    box-shadow:0 8px 30px rgba(62,116,255,0.35);}
+  .run:hover{transform:translateY(-2px);background-position:100% 0;box-shadow:0 14px 40px rgba(139,92,246,0.45);}
+  .run:active{transform:translateY(0);}
+  .run:focus-visible{outline:2px solid var(--electric);outline-offset:3px;}
+  .err{color:var(--magenta);font-size:13px;margin-top:14px;min-height:18px;font-family:"Space Mono",monospace;letter-spacing:0.02em;}
+
+  /* Results */
+  .results{margin-top:0;border-top:1px solid var(--edge);max-height:0;opacity:0;overflow:hidden;
+    transition:max-height .6s cubic-bezier(.2,.8,.2,1),opacity .5s,margin-top .4s,padding-top .4s;}
+  .results.show{max-height:2200px;opacity:1;margin-top:34px;padding-top:34px;}
+  .result-grid{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:34px;align-items:center;}
+  .gauge-wrap{text-align:center;}
+  .gauge{width:100%;max-width:320px;height:auto;}
+  .gauge .track{fill:none;stroke:rgba(120,150,255,0.14);stroke-width:14;stroke-linecap:round;}
+  .gauge .value-arc{fill:none;stroke:url(#gaugeGrad);stroke-width:14;stroke-linecap:round;filter:drop-shadow(0 0 8px rgba(74,217,255,0.5));}
+  .gauge-readout{margin-top:-8px;}
+  .bf-num{font-family:"Space Mono",monospace;font-weight:700;font-size:52px;line-height:1;letter-spacing:-0.02em;}
+  .bf-num .pct{font-size:24px;color:var(--ink-dim);}
+  .bf-class{font-weight:900;text-transform:uppercase;letter-spacing:0.14em;font-size:13px;margin-top:8px;}
+  .stats{display:flex;flex-direction:column;gap:2px;}
+  .stat{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:15px 0;border-bottom:1px solid var(--edge);}
+  .stat:last-child{border-bottom:none;}
+  .stat .k{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);}
+  .stat .v{font-family:"Space Mono",monospace;font-weight:700;font-size:22px;color:var(--ink);}
+  .stat .v small{font-size:12px;color:var(--ink-dim);font-weight:400;margin-left:4px;}
+
+  .chart{margin-top:34px;}
+  .chart h3{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink-faint);font-weight:400;margin:0 0 14px;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--edge);}
+  th{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);font-weight:400;}
+  td:first-child{font-weight:600;}
+  td.num{font-family:"Space Mono",monospace;color:var(--ink-dim);text-align:right;}
+  tr.active td{background:rgba(74,217,255,0.09);color:var(--ink);}
+  tr.active td:first-child{box-shadow:inset 3px 0 0 var(--electric);}
+
+  /* Email module */
+  .email-box{margin-top:34px;padding:24px;border:1px solid var(--edge);border-radius:3px;background:var(--panel-2);}
+  .email-box h3{margin:0 0 6px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;font-size:18px;}
+  .email-box p.lead{margin:0 0 18px;color:var(--ink-dim);font-size:13px;line-height:1.5;max-width:60ch;}
+  .email-fields{display:grid;grid-template-columns:1fr 160px;gap:14px;}
+  .email-fields .fld label{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:7px;}
+  .email-fields input[type="email"],.email-fields input[type="text"]{width:100%;background:rgba(5,6,15,0.4);border:1px solid var(--edge);
+    border-radius:3px;color:var(--ink);font-family:"Space Mono",monospace;font-size:15px;padding:11px 13px;transition:border-color .18s,box-shadow .18s;}
+  .email-fields input:focus{outline:none;border-color:var(--edge-hot);box-shadow:var(--glow);}
+  .consent{display:flex;gap:10px;align-items:flex-start;margin:16px 0 18px;font-size:12px;color:var(--ink-dim);line-height:1.5;}
+  .consent input{margin-top:2px;accent-color:var(--electric);width:16px;height:16px;flex-shrink:0;}
+  .consent a{color:var(--electric);}
+  .send-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .send{font-family:"Archivo",sans-serif;font-weight:900;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--void);border:none;border-radius:3px;padding:13px 28px;background:var(--electric);cursor:pointer;
+    transition:transform .12s,box-shadow .2s,opacity .2s,background .2s;}
+  .send:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 30px rgba(74,217,255,0.3);}
+  .send:disabled{opacity:.4;cursor:not-allowed;}
+  .send:focus-visible{outline:2px solid var(--electric);outline-offset:3px;}
+  .send-msg{font-family:"Space Mono",monospace;font-size:12.5px;letter-spacing:0.02em;min-height:16px;}
+  .send-msg.ok{color:var(--ok);} .send-msg.bad{color:var(--magenta);} .send-msg.info{color:var(--ink-dim);}
+
+  .foot{padding:22px clamp(22px,4vw,44px);border-top:1px solid var(--edge);font-size:11.5px;line-height:1.6;color:var(--ink-faint);}
+  .foot b{color:var(--ink-dim);font-weight:600;}
+  .foot .mark{font-family:"Space Mono",monospace;letter-spacing:0.14em;text-transform:uppercase;color:var(--electric);font-size:10.5px;display:block;margin-top:10px;}
+
+  @media (max-width:720px){
+    .folds{grid-template-columns:1fr 1fr;}
+    .result-grid{grid-template-columns:1fr;gap:22px;}
+    .email-fields{grid-template-columns:1fr;}
+    .run{width:100%;margin-left:0;}
+    .runbar{flex-direction:column;align-items:stretch;}
+    .sum-tally{text-align:center;}
+  }
+  @media (max-width:440px){ .folds{grid-template-columns:1fr;} }
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<main class="instrument" role="region" aria-label="Body fat calculator">
+
+  <header class="head">
+    <p class="eyebrow" id="eyebrow">Fitness Brainiac · 9-Point Skinfold</p>
+    <h1 id="title"><span class="swap" id="title-swap">Parrillo Body<br>Fat <span class="thin">Analysis</span></span></h1>
+    <p class="sub" id="sub">Nine-site caliper protocol built for tracking change over time. Take every fold on the right side of the body, in millimeters.</p>
+  </header>
+
+  <div class="body">
+
+    <!-- Method -->
+    <div class="method-row">
+      <span class="field-label">Method</span>
+      <div class="seg method" role="radiogroup" aria-label="Measurement method">
+        <input type="radio" name="method" id="m-par" value="parrillo" checked>
+        <label for="m-par">Parrillo 9</label>
+        <input type="radio" name="method" id="m-jp7" value="jp7">
+        <label for="m-jp7">J-P 7</label>
+        <input type="radio" name="method" id="m-jp3" value="jp3">
+        <label for="m-jp3">J-P 3</label>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="row-controls">
+      <div>
+        <span class="field-label">Units</span>
+        <div class="seg" role="radiogroup" aria-label="Unit system">
+          <input type="radio" name="unit" id="u-imp" value="imperial" checked>
+          <label for="u-imp">lb</label>
+          <input type="radio" name="unit" id="u-met" value="metric">
+          <label for="u-met">kg</label>
+        </div>
+      </div>
+      <div>
+        <span class="field-label">Sex</span>
+        <div class="seg" role="radiogroup" aria-label="Sex">
+          <input type="radio" name="sex" id="s-m" value="male" checked>
+          <label for="s-m">Men</label>
+          <input type="radio" name="sex" id="s-f" value="female">
+          <label for="s-f">Women</label>
+        </div>
+      </div>
+      <div class="weight-wrap">
+        <label class="field-label" for="weight">Body weight</label>
+        <div class="input-shell">
+          <input type="number" id="weight" inputmode="decimal" min="1" step="0.1" placeholder="0.0">
+          <span class="unit-tag" id="weight-unit">lb</span>
+        </div>
+      </div>
+      <div class="age-wrap">
+        <label class="field-label" for="age">Age</label>
+        <div class="input-shell" id="age-shell">
+          <input type="number" id="age" inputmode="numeric" min="10" max="100" step="1" placeholder="––">
+          <span class="unit-tag">yrs</span>
+        </div>
+        <div class="field-note" id="age-note">Not used by Parrillo</div>
+      </div>
+    </div>
+
+    <!-- Skinfolds -->
+    <div class="grid-head">
+      <span class="grid-title">Skinfold sites</span>
+      <span class="grid-note">Sum · <b id="sum-inline">0 mm</b></span>
+    </div>
+    <div class="folds" id="folds"></div>
+
+    <div class="runbar">
+      <span class="sum-tally">Σ <span id="site-count">9</span> sites <b id="sum-big">0</b> mm</span>
+      <button class="run" id="run" type="button">Run analysis</button>
+    </div>
+    <div class="err" id="err" role="alert"></div>
+
+    <!-- Results -->
+    <section class="results" id="results" aria-live="polite">
+      <div class="result-grid">
+        <div class="gauge-wrap">
+          <svg class="gauge" viewBox="0 0 260 150" role="img" aria-label="Body fat gauge">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#4ad9ff"/><stop offset="38%" stop-color="#3e74ff"/>
+                <stop offset="72%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#e0459b"/>
+              </linearGradient>
+            </defs>
+            <path class="track" id="gaugeTrack" d=""/>
+            <path class="value-arc" id="gaugeValue" d=""/>
+          </svg>
+          <div class="gauge-readout">
+            <div class="bf-num"><span id="bf-val">0.0</span><span class="pct">%</span></div>
+            <div class="bf-class" id="bf-class"></div>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><span class="k">Body fat</span><span class="v"><span id="st-bf">0.0</span>%</span></div>
+          <div class="stat"><span class="k">Fat mass</span><span class="v"><span id="st-fat">0.0</span><small id="st-fat-u">lb</small></span></div>
+          <div class="stat"><span class="k">Lean mass</span><span class="v"><span id="st-lean">0.0</span><small id="st-lean-u">lb</small></span></div>
+          <div class="stat"><span class="k">Skinfold sum</span><span class="v"><span id="st-sum">0</span><small>mm</small></span></div>
+        </div>
+      </div>
+
+      <div class="chart">
+        <h3>Where this lands — <span id="chart-sex">Men</span></h3>
+        <table id="classTable">
+          <thead><tr><th>Classification</th><th style="text-align:right" id="th-active">Men</th></tr></thead>
+          <tbody id="classBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Email results -->
+      <div class="email-box">
+        <h3>Email me these results</h3>
+        <p class="lead">Send this analysis to your inbox. Enter your ZIP so we can confirm you're in the Agoura Hills service area.</p>
+        <div class="email-fields">
+          <div class="fld">
+            <label for="em-addr">Email address</label>
+            <input type="email" id="em-addr" autocomplete="email" placeholder="you@email.com">
+          </div>
+          <div class="fld">
+            <label for="em-zip">ZIP code</label>
+            <input type="text" id="em-zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="91301">
+          </div>
+        </div>
+        <label class="consent">
+          <input type="checkbox" id="em-consent">
+          <span>I agree Fitness Brainiac may email me these results and contact me about training and body-composition services. <a href="/privacy.html" target="_blank" rel="noopener">Privacy</a>.</span>
+        </label>
+        <div class="send-row">
+          <button class="send" id="send" type="button" disabled>Send to my inbox</button>
+          <span class="send-msg info" id="send-msg"></span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <b>Methods:</b> Parrillo 9-site — BF% = (27 × Σ folds) ÷ weight(lb); no age/sex adjustment, best for tracking trends.
+    Jackson-Pollock 3 & 7-site — age- and sex-specific body-density regression (Siri conversion), the more validated estimate.
+    All are field estimates, not clinical measures, and not a substitute for medical advice.
+    <span class="mark">The climb is never over.</span>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---- Site dictionary ----
+  var SITE={
+    chest:["Chest","Diagonal fold, midway between armpit and nipple"],
+    abdominal:["Abdominal","Vertical fold, one inch right of the navel"],
+    thigh:["Thigh","Vertical fold, midway between kneecap and hip"],
+    bicep:["Bicep","Vertical fold, halfway between shoulder and elbow, on the bicep"],
+    tricep:["Tricep","Vertical fold, midway between elbow and shoulder, back of arm"],
+    subscapular:["Subscapular","Diagonal fold, directly below the shoulder blade"],
+    suprailiac:["Suprailiac","Diagonal fold, directly above the iliac crest"],
+    lowerback:["Lower Back","Horizontal fold over the kidneys, 2 in. right of spine"],
+    calf:["Calf","Vertical fold, inside of leg on the largest part of the calf"],
+    midaxillary:["Midaxillary","Vertical fold on the midaxillary line, level with the xiphoid"]
+  };
+
+  var METHOD={
+    parrillo:{
+      title:'Parrillo Body<br>Fat <span class="thin">Analysis</span>',
+      eyebrow:"Fitness Brainiac · 9-Point Skinfold",
+      sub:"Nine-site caliper protocol built for tracking change over time. Take every fold on the right side of the body, in millimeters.",
+      sites:["chest","abdominal","thigh","bicep","tricep","subscapular","suprailiac","lowerback","calf"],
+      needsAge:false
+    },
+    jp7:{
+      title:'Jackson-Pollock<br>7-Site <span class="thin">Analysis</span>',
+      eyebrow:"Fitness Brainiac · 7-Site Skinfold",
+      sub:"Seven-site regression that factors in age and sex — the more comprehensive Jackson-Pollock estimate. All folds on the right side, in millimeters.",
+      sites:["chest","midaxillary","tricep","subscapular","abdominal","suprailiac","thigh"],
+      needsAge:true
+    },
+    jp3:{
+      title:'Jackson-Pollock<br>3-Site <span class="thin">Analysis</span>',
+      eyebrow:"Fitness Brainiac · 3-Site Skinfold",
+      sub:"Fast three-site regression, age- and sex-specific. Sites differ by sex. Ideal for frequent re-testing where technique consistency matters most.",
+      sites:{male:["chest","abdominal","thigh"],female:["tricep","suprailiac","thigh"]},
+      needsAge:true
+    }
+  };
+
+  // Classification bands (ACE general norms). low inclusive, high exclusive.
+  var BANDS={
+    male:[["Essential fat",0,6,"2–5%"],["Athletes",6,14,"6–13%"],["Fitness",14,18,"14–17%"],["Acceptable",18,25,"18–24%"],["Obese",25,999,"25%+"]],
+    female:[["Essential fat",0,14,"10–13%"],["Athletes",14,21,"14–20%"],["Fitness",21,25,"21–24%"],["Acceptable",25,32,"25–31%"],["Obese",32,999,"32%+"]]
+  };
+  var BAND_COLOR={"Essential fat":"#4ad9ff","Athletes":"#3e74ff","Fitness":"#7c9bff","Acceptable":"#8b5cf6","Obese":"#e0459b"};
+
+  var GAUGE_MAX=45, CX=130, CY=132, R=104;
+  function pt(pct){var f=Math.max(0,Math.min(pct,GAUGE_MAX))/GAUGE_MAX;var a=Math.PI-f*Math.PI;return{x:CX+R*Math.cos(a),y:CY-R*Math.sin(a)};}
+  function arc(a1,a2){var A=pt(a1),B=pt(a2);
+    // Gauge is a 180° semicircle, so no sub-arc ever exceeds 180° → large-arc-flag is always 0.
+    return "M "+A.x.toFixed(2)+" "+A.y.toFixed(2)+" A "+R+" "+R+" 0 0 1 "+B.x.toFixed(2)+" "+B.y.toFixed(2);}
+  $("gaugeTrack").setAttribute("d",arc(0,GAUGE_MAX));
+
+  // ---- state ----
+  var values={};                 // siteKey -> string, persists across methods
+  var lastResult=null;
+
+  function method(){return document.querySelector('input[name="method"]:checked').value;}
+  function unit(){return document.querySelector('input[name="unit"]:checked').value;}
+  function sex(){return document.querySelector('input[name="sex"]:checked').value;}
+  function unitLabel(){return unit()==="metric"?"kg":"lb";}
+
+  function activeSites(){
+    var m=METHOD[method()];
+    return Array.isArray(m.sites)?m.sites:m.sites[sex()];
+  }
+
+  // ---- build tiles ----
+  function tileHTML(key,i){
+    var s=SITE[key];
+    return '<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+
+      '<label for="f-'+key+'">'+s[0]+'</label>'+
+      '<span class="desc">'+s[1]+'</span>'+
+      '<input type="number" data-key="'+key+'" id="f-'+key+'" class="fold-in" inputmode="decimal" min="0" step="0.5" placeholder="0.0" value="'+(values[key]||"")+'">'+
+      '<span class="mm">mm</span>';
+  }
+  function wireInputs(){
+    Array.prototype.forEach.call(document.querySelectorAll(".fold-in"),function(el){
+      el.addEventListener("input",function(){values[el.dataset.key]=el.value;refreshSum();});
+      el.addEventListener("keydown",function(e){if(e.key==="Enter")run();});
+    });
+  }
+  function renderTiles(animated){
+    var host=$("folds"); var sites=activeSites();
+    $("site-count").textContent=sites.length;
+    if(!animated||reduceMotion){
+      host.innerHTML="";
+      sites.forEach(function(k,i){var d=document.createElement("div");d.className="fold";d.innerHTML=tileHTML(k,i);host.appendChild(d);});
+      wireInputs();refreshSum();return;
+    }
+    // flip current out, staggered
+    var current=Array.prototype.slice.call(host.children);
+    current.forEach(function(el,i){el.style.transitionDelay=(i*35)+"ms";el.classList.add("flip-out");});
+    var outTime=current.length?current.length*35+240:0;
+    setTimeout(function(){
+      host.innerHTML="";
+      sites.forEach(function(k,i){
+        var d=document.createElement("div");d.className="fold flip-in-start";d.innerHTML=tileHTML(k,i);host.appendChild(d);
+      });
+      wireInputs();refreshSum();
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        Array.prototype.forEach.call(host.children,function(el,i){el.style.transitionDelay=(i*45)+"ms";el.classList.remove("flip-in-start");});
+        setTimeout(function(){Array.prototype.forEach.call(host.children,function(el){el.style.transitionDelay="";});},sites.length*45+340);
+      });});
+    },outTime);
+  }
+
+  // ---- header swap ----
+  function applyMethodMeta(){
+    var m=METHOD[method()];
+    $("eyebrow").textContent=m.eyebrow;
+    $("sub").textContent=m.sub;
+    var t=$("title"),sw=$("title-swap");
+    t.classList.add("swapping");
+    setTimeout(function(){sw.innerHTML=m.title;t.classList.remove("swapping");},reduceMotion?0:300);
+    // age enable/disable
+    var shell=$("age-shell"),note=$("age-note");
+    if(m.needsAge){shell.classList.remove("disabled");note.textContent="Required for Jackson-Pollock";}
+    else{shell.classList.add("disabled");note.textContent="Not used by Parrillo";}
+  }
+
+  // ---- sum ----
+  function currentSum(){
+    return activeSites().reduce(function(t,k){var v=parseFloat(values[k]);return t+(isFinite(v)&&v>0?v:0);},0);
+  }
+  function refreshSum(){
+    var s=currentSum();var txt=(s%1?s.toFixed(1):s);
+    $("sum-inline").textContent=txt+" mm";$("sum-big").textContent=txt;
+  }
+
+  // ---- unit labels ----
+  function syncUnitLabels(){var u=unitLabel();$("weight-unit").textContent=u;$("st-fat-u").textContent=u;$("st-lean-u").textContent=u;}
+
+  // ---- chart ----
+  function renderChart(sexKey,active){
+    var label=sexKey==="male"?"Men":"Women";
+    $("chart-sex").textContent=label;$("th-active").textContent=label;
+    var tb=$("classBody");tb.innerHTML="";
+    BANDS[sexKey].forEach(function(b){
+      var tr=document.createElement("tr");if(active&&b[0]===active)tr.className="active";
+      tr.innerHTML="<td>"+b[0]+"</td><td class='num'>"+b[3]+"</td>";tb.appendChild(tr);
+    });
+  }
+  function bandFor(bf,sexKey){var l=BANDS[sexKey];for(var i=0;i<l.length;i++){if(bf>=l[i][1]&&bf<l[i][2])return l[i][0];}return l[l.length-1][0];}
+
+  // ---- core formulas ----
+  function computeBF(m,sexKey,age,sum,wLb){
+    if(m==="parrillo") return 27*sum/wLb;
+    var bd;
+    if(m==="jp3"){
+      bd = sexKey==="male"
+        ? 1.10938 - 0.0008267*sum + 0.0000016*sum*sum - 0.0002574*age
+        : 1.0994921 - 0.0009929*sum + 0.0000023*sum*sum - 0.0001392*age;
+    }else{ // jp7
+      bd = sexKey==="male"
+        ? 1.112 - 0.00043499*sum + 0.00000055*sum*sum - 0.00028826*age
+        : 1.097 - 0.00046971*sum + 0.00000056*sum*sum - 0.00012828*age;
+    }
+    return (495/bd)-450; // Siri
+  }
+
+  // ---- run ----
+  function run(){
+    var err=$("err");err.textContent="";
+    var m=method(),sexKey=sex();
+    var w=parseFloat($("weight").value);
+    if(!isFinite(w)||w<=0){err.textContent="Enter a body weight to run the analysis.";$("weight").focus();return;}
+    var age=parseFloat($("age").value);
+    if(METHOD[m].needsAge && (!isFinite(age)||age<=0)){err.textContent="Jackson-Pollock needs an age. Enter it above.";$("age").focus();return;}
+    var sites=activeSites();
+    var missing=sites.some(function(k){var v=parseFloat(values[k]);return !isFinite(v)||v<=0;});
+    if(missing){err.textContent="Enter all "+sites.length+" skinfolds (in mm) for this method.";return;}
+
+    var sum=currentSum();
+    var wLb=unit()==="metric"?w*2.2046226218:w;
+    var bf=computeBF(m,sexKey,age,sum,wLb);
+    bf=Math.max(2,Math.min(bf,75));
+    var fat=w*bf/100, lean=w-fat, band=bandFor(bf,sexKey);
+
+    lastResult={method:m,methodLabel:{parrillo:"Parrillo 9-Site",jp7:"Jackson-Pollock 7-Site",jp3:"Jackson-Pollock 3-Site"}[m],
+      sex:sexKey,age:METHOD[m].needsAge?age:null,unit:unitLabel(),weight:w,sum:sum,bf:bf,fat:fat,lean:lean,band:band};
+
+    $("bf-val").textContent=bf.toFixed(1);$("st-bf").textContent=bf.toFixed(1);
+    $("st-fat").textContent=fat.toFixed(1);$("st-lean").textContent=lean.toFixed(1);
+    $("st-sum").textContent=(sum%1?sum.toFixed(1):sum);
+    var cl=$("bf-class");cl.textContent=band;cl.style.color=BAND_COLOR[band]||"#eef1ff";
+    var va=$("gaugeValue");if(bf<=0.05)va.setAttribute("d","");else va.setAttribute("d",arc(0,bf));
+    renderChart(sexKey,band);
+
+    var res=$("results");if(!res.classList.contains("show"))res.classList.add("show");
+    if(window.innerWidth<720)setTimeout(function(){res.scrollIntoView({behavior:"smooth",block:"start"});},120);
+  }
+
+  // ---- email module ----
+  function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);}
+  function validZip(v){return /^\d{5}$/.test(v);}
+  function refreshSendState(){
+    var ok=validEmail($("em-addr").value.trim()) && validZip($("em-zip").value.trim()) && $("em-consent").checked && !!lastResult;
+    $("send").disabled=!ok;
+  }
+  ["em-addr","em-zip"].forEach(function(id){$(id).addEventListener("input",refreshSendState);});
+  $("em-zip").addEventListener("input",function(){this.value=this.value.replace(/\D/g,"").slice(0,5);});
+  $("em-consent").addEventListener("change",refreshSendState);
+
+  function send(){
+    var msg=$("send-msg");
+    if(!lastResult){msg.className="send-msg bad";msg.textContent="Run an analysis first.";return;}
+    var payload=Object.assign({},lastResult,{
+      email:$("em-addr").value.trim(),
+      zip:$("em-zip").value.trim(),
+      consent:true,
+      generatedAt:new Date().toISOString()
+    });
+    $("send").disabled=true;msg.className="send-msg info";msg.textContent="Sending…";
+    fetch("/api/email-results",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})
+      .then(function(r){return r.json().then(function(j){return {status:r.status,body:j};});})
+      .then(function(res){
+        if(res.status===200){msg.className="send-msg ok";msg.textContent="Sent — check your inbox (and spam, just in case).";}
+        else if(res.status===403){msg.className="send-msg bad";msg.textContent=res.body.error||"We can only email results to visitors in the service area.";$("send").disabled=false;}
+        else{msg.className="send-msg bad";msg.textContent=res.body.error||"Something went wrong. Try again in a moment.";$("send").disabled=false;}
+      })
+      .catch(function(){
+        msg.className="send-msg bad";
+        msg.textContent="Email service isn't reachable here. It runs once deployed on FitnessBrainiac.com.";
+        $("send").disabled=false;
+      });
+  }
+  $("send").addEventListener("click",send);
+
+  // ---- listeners ----
+  document.querySelectorAll('input[name="method"]').forEach(function(r){r.addEventListener("change",function(){applyMethodMeta();renderTiles(true);});});
+  document.querySelectorAll('input[name="sex"]').forEach(function(r){r.addEventListener("change",function(){
+    // JP3 sites change with sex → re-render tiles
+    if(method()==="jp3")renderTiles(true);else refreshSum();
+    renderChart(sex(),lastResult?lastResult.band:null);
+  });});
+  document.querySelectorAll('input[name="unit"]').forEach(function(r){r.addEventListener("change",syncUnitLabels);});
+  document.querySelectorAll('#weight,#age').forEach(function(el){el.addEventListener("keydown",function(e){if(e.key==="Enter")run();});});
+  $("run").addEventListener("click",run);
+
+  // ---- init ----
+  applyMethodMeta();syncUnitLabels();renderChart("male",null);renderTiles(false);refreshSendState();
+})();
+</script>
+</body>
+</html>

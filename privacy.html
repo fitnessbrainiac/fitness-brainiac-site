@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Fitness Brainiac</title>
+<meta name="description" content="How Fitness Brainiac collects, uses, and protects information submitted through fitnessbrainiac.com, including the body fat calculator.">
+<link rel="canonical" href="https://www.fitnessbrainiac.com/privacy.html">
+<meta name="robots" content="all">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#07070B;--ink-2:#12111C;--bone:#EDEAE2;--concrete:#9092A8;
+    --blue:#5B7FFF;--purple:#9D5CFF;--red:#FF4438;--amber:#FFB020;
+    --line:rgba(237,234,226,0.12);
+    --panel:rgba(9,9,14,0.78);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:#050508;color:var(--bone);font-family:'IBM Plex Sans',sans-serif;overflow-x:hidden;}
+  .display{font-family:'Archivo Black',sans-serif;text-transform:uppercase;line-height:0.92;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ============ FIXED CINEMATIC STAGE ============ */
+  .stage{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+    background:#050508 url('assets/sky-planet.jpg') center top / cover no-repeat;}
+  img.layer{position:absolute;display:block;width:100%;height:auto;left:0;will-change:transform;}
+  .l-mtn-bg{bottom:0;}
+  .l-mtn-fg{bottom:0;}
+  .l-ground{bottom:0;}
+  /* Fog: an inner element runs drift+pulse; the outer wrapper is moved by scroll parallax. */
+  .fog-wrap{position:absolute;left:0;width:100%;bottom:0;will-change:transform;}
+  .fog-wrap img{display:block;width:130%;height:auto;margin-left:-15%;}
+  .l-fog-far img{opacity:0.85;animation:fog-drift-far 80s ease-in-out infinite alternate, fog-pulse-far 44s ease-in-out infinite;}
+  .l-fog-near img{opacity:0.92;animation:fog-drift-near 52s ease-in-out infinite alternate, fog-pulse-near 33s ease-in-out infinite;animation-delay:0s,7s;}
+  @keyframes fog-drift-far{from{transform:translateX(-4%);}to{transform:translateX(4%);}}
+  @keyframes fog-drift-near{from{transform:translateX(5%);}to{transform:translateX(-5%);}}
+  @keyframes fog-pulse-far{0%,55%{opacity:0.85;}68%{opacity:0.3;}80%,100%{opacity:0.85;}}
+  @keyframes fog-pulse-near{0%,48%{opacity:0.92;}62%{opacity:0.35;}78%,100%{opacity:0.92;}}
+
+  /* everything above the stage */
+  .content{position:relative;z-index:1;}
+
+  /* ============ TICKER (pure CSS marquee) ============ */
+  .ticker-wrap{position:sticky;top:0;z-index:100;background:var(--ink-2);border-bottom:1px solid var(--line);overflow:hidden;height:40px;display:flex;align-items:center;}
+  .ticker-track{display:flex;width:max-content;animation:scroll-ticker 68s linear infinite;}
+  @keyframes scroll-ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .ticker-item{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;padding:0 28px;display:flex;align-items:center;gap:8px;color:var(--concrete);border-right:1px solid var(--line);white-space:nowrap;height:40px;}
+  .ticker-item .up{color:var(--blue);}
+  .ticker-item .down{color:var(--red);}
+  .ticker-item.callout{color:var(--amber);font-weight:600;letter-spacing:0.08em;text-shadow:0 0 14px rgba(255,176,32,0.45);}
+
+  /* ============ NAV ============ */
+  nav{display:flex;justify-content:space-between;align-items:center;padding:20px 5vw;border-bottom:1px solid var(--line);background:rgba(18,17,28,0.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .logo{font-family:'Archivo Black',sans-serif;font-size:15px;letter-spacing:0.02em;color:var(--bone);text-decoration:none;}
+  .logo span{color:var(--blue);}
+  .navlinks{display:flex;gap:32px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;}
+  .navlinks a{color:var(--concrete);text-decoration:none;position:relative;}
+  .navlinks a.active{color:var(--bone);}
+  .navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--blue);transition:width .3s ease;}
+  .navlinks a:hover{color:var(--bone);}
+  .navlinks a:hover::after,.navlinks a.active::after{width:100%;}
+
+  /* ============ HERO ============ */
+  .hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;padding:0 5vw;position:relative;}
+  .hero-scrim{position:absolute;inset:0;background:linear-gradient(100deg, rgba(5,5,8,0.72) 0%, rgba(5,5,8,0.45) 42%, rgba(5,5,8,0.08) 70%, transparent 88%);pointer-events:none;}
+  .hero-content{position:relative;max-width:920px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--blue);margin-bottom:22px;display:flex;align-items:center;gap:10px;text-shadow:0 2px 10px rgba(0,0,0,0.8);}
+  .eyebrow::before{content:'';width:7px;height:7px;background:var(--blue);border-radius:50%;box-shadow:0 0 10px var(--blue);flex:none;}
+  h1.display{font-size:clamp(44px,7.5vw,100px);letter-spacing:-0.01em;text-shadow:0 4px 28px rgba(0,0,0,0.8);}
+  h1.display .out{-webkit-text-stroke:1.5px var(--bone);color:transparent;}
+  .hero-sub{margin-top:26px;max-width:540px;font-size:17px;line-height:1.65;color:#D8D6E8;text-shadow:0 2px 14px rgba(0,0,0,0.85);}
+  .hero-cta-wrap{display:inline-flex;flex-direction:column;gap:16px;align-items:stretch;margin-top:44px;}
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;}
+
+  /* ============ BUTTONS ============ */
+  .btn{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.05em;padding:15px 26px;border:1px solid var(--bone);color:var(--bone);text-decoration:none;transition:all .25s ease;display:inline-block;background:rgba(7,7,11,0.5);cursor:pointer;}
+  .btn.primary{background:var(--bone);color:var(--ink);}
+  .btn.primary:hover{background:var(--blue);border-color:var(--blue);color:#050508;transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--purple);}
+  .btn.ghost:hover{transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--blue);border-color:var(--blue);color:var(--blue);}
+  .btn.bodyfat{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:9px;width:100%;text-align:center;border-color:rgba(91,127,255,0.55);}
+  .btn.bodyfat .bf-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 10px var(--blue);flex:none;}
+  .btn.bodyfat span.bf-label{position:relative;z-index:2;}
+  .btn.bodyfat::after{content:'';position:absolute;top:0;left:0;height:100%;width:55%;background:linear-gradient(100deg,transparent,rgba(180,200,255,0.33) 50%,transparent);transform:translateX(-200%) skewX(-18deg);animation:bf-sheen 15s ease-in-out infinite;pointer-events:none;z-index:1;}
+  @keyframes bf-sheen{0%{transform:translateX(-200%) skewX(-18deg);}7%{transform:translateX(260%) skewX(-18deg);}100%{transform:translateX(260%) skewX(-18deg);}}
+  @media (prefers-reduced-motion:reduce){.btn.bodyfat::after{display:none;}}
+
+  /* ============ PANELS & SECTIONS ============ */
+  section.band{padding:70px 5vw;}
+  .panel{background:var(--panel);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border:1px solid var(--line);padding:56px 48px;max-width:1200px;margin:0 auto;}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--amber);margin-bottom:18px;}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease, transform .8s ease;}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+
+  .about-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:start;}
+  .about-grid h2.display{font-size:clamp(30px,4vw,48px);margin-bottom:24px;}
+  .about-grid p, .body-copy p{color:var(--concrete);font-size:16px;line-height:1.75;max-width:560px;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.04em;border:1px solid var(--line);padding:9px 14px;color:var(--concrete);}
+  .stat-block{border:1px solid var(--line);padding:26px;background:rgba(7,7,11,0.4);}
+  .stat-block .num{font-family:'Archivo Black',sans-serif;font-size:50px;color:var(--blue);line-height:1;}
+  .stat-block .lbl{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--concrete);letter-spacing:0.08em;margin-top:10px;}
+  .stat-block + .stat-block{margin-top:16px;}
+
+  .cta-band{text-align:center;}
+  .cta-band h2.display{font-size:clamp(30px,4.5vw,52px);margin-bottom:16px;}
+  .cta-band p{color:var(--concrete);font-size:16.5px;max-width:520px;margin:0 auto 36px;line-height:1.7;}
+
+  .price-category{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;color:var(--concrete);margin:44px 0 18px;padding-top:30px;border-top:1px solid var(--line);}
+  .price-category.first{border-top:none;padding-top:0;margin-top:36px;}
+  .price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);}
+  .price-card{background:rgba(9,9,14,0.92);padding:30px 24px;transition:transform .3s ease, box-shadow .3s ease;position:relative;}
+  .price-card:hover{transform:translate(-6px,-6px);box-shadow:6px 6px 0 var(--purple);z-index:2;}
+  .price-card .plabel{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--amber);letter-spacing:0.08em;margin-bottom:14px;}
+  .price-card h3{font-family:'Archivo Black',sans-serif;font-size:18px;text-transform:uppercase;margin-bottom:8px;}
+  .price-card .amt{font-family:'IBM Plex Mono',monospace;font-size:26px;color:var(--bone);margin:16px 0 6px;transition:opacity .15s ease;}
+  .price-card .per{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--concrete);transition:opacity .15s ease;}
+  .fading{opacity:0;}
+
+  .toggle-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:20px;}
+  .toggle-label{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;color:var(--concrete);}
+  .toggle-label.on{color:var(--bone);}
+  .toggle-switch{position:relative;width:64px;height:32px;border:1px solid var(--bone);cursor:pointer;background:transparent;padding:0;}
+  .toggle-knob{position:absolute;top:3px;left:3px;width:24px;height:24px;background:var(--bone);transition:transform .28s cubic-bezier(.4,0,.2,1), background .28s ease;}
+  .toggle-switch.half .toggle-knob{transform:translateX(30px);background:var(--blue);}
+  .duration-note{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--blue);letter-spacing:0.04em;}
+
+  .quote-block{border-left:2px solid var(--purple);padding-left:24px;font-family:'Archivo Black',sans-serif;font-size:clamp(20px,2.3vw,29px);line-height:1.3;color:var(--bone);max-width:700px;margin:0 auto;}
+  .quote-block cite{display:block;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--concrete);font-style:normal;letter-spacing:0.04em;}
+
+  .portrait-frame{position:relative;aspect-ratio:6/5;border:1px solid var(--line);overflow:hidden;transition:transform .4s ease, box-shadow .4s ease;background:rgba(7,7,11,0.4);}
+  .portrait-frame:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--purple);}
+  .portrait-frame img{width:100%;height:100%;object-fit:cover;display:block;}
+  .portrait-corner{position:absolute;width:22px;height:22px;border:1px solid var(--blue);z-index:2;}
+  .portrait-corner.tl{top:-1px;left:-1px;border-right:none;border-bottom:none;}
+  .portrait-corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none;}
+  .bio-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:60px;align-items:center;}
+  .bio-grid h1.display, .bio-grid h2.display{font-size:clamp(32px,4.2vw,54px);margin-bottom:22px;text-shadow:none;}
+
+  .content-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);}
+  .content-card{background:rgba(9,9,14,0.92);padding:38px 30px;}
+  .content-card .card-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--purple);margin-bottom:16px;}
+  .content-card h3{font-family:'Archivo Black',sans-serif;font-size:19px;text-transform:uppercase;margin-bottom:14px;}
+  .content-card p{color:var(--concrete);font-size:15px;line-height:1.7;}
+  .practitioner-row{display:grid;grid-template-columns:200px 1fr;gap:36px;align-items:center;margin-top:56px;}
+  .practitioner-frame{position:relative;aspect-ratio:1/1;border:1px solid var(--line);overflow:hidden;background:rgba(7,7,11,0.4);}
+  .practitioner-frame img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;}
+  .practitioner-copy h3{font-family:'Archivo Black',sans-serif;font-size:22px;text-transform:uppercase;margin:10px 0 12px;}
+  .practitioner-copy p{color:var(--concrete);font-size:15px;line-height:1.7;max-width:560px;}
+
+  .form-grid{max-width:560px;display:flex;flex-direction:column;gap:20px;}
+  .form-grid label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.06em;color:var(--concrete);display:block;margin-bottom:8px;}
+  .form-grid input,.form-grid textarea{width:100%;background:rgba(7,7,11,0.6);border:1px solid var(--line);color:var(--bone);padding:14px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;}
+  .form-grid textarea{resize:vertical;}
+
+  /* Phone: flip to reveal number, then press-and-hold to open Messages */
+  .phone-flip{display:inline-block;perspective:600px;background:none;border:none;padding:0;cursor:pointer;margin-bottom:40px;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+  .phone-flip-inner{position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;min-width:250px;height:52px;}
+  .phone-flip.revealed .phone-flip-inner{transform:rotateX(180deg);}
+  .phone-face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--bone);font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:0.05em;color:var(--bone);overflow:hidden;}
+  .phone-face.back{transform:rotateX(180deg);background:var(--bone);color:var(--ink);border-color:var(--bone);font-size:17px;letter-spacing:0.06em;}
+  .phone-face .num-label{position:relative;z-index:2;}
+  .hold-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--blue);z-index:1;}
+  .phone-face.back .num-label{transition:color .2s ease;}
+  .phone-flip.holding .phone-face.back .num-label{color:var(--bone);}
+  .hold-hint{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:var(--concrete);margin-top:-30px;margin-bottom:40px;height:14px;transition:opacity .3s ease;opacity:0;}
+  .hold-hint.show{opacity:1;}
+
+  /* Desktop text-request panel (shown when no SMS app is available) */
+  .textreq{display:none;margin:-16px 0 40px;max-width:440px;border:1px solid var(--line);background:rgba(9,9,14,0.92);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);padding:28px 26px;}
+  .textreq.show{display:block;animation:tr-in .35s ease;}
+  @keyframes tr-in{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  .textreq h4{font-family:'Archivo Black',sans-serif;font-size:16px;text-transform:uppercase;margin-bottom:8px;}
+  .textreq p{color:var(--concrete);font-size:13.5px;line-height:1.6;margin-bottom:20px;}
+  .textreq label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--concrete);display:block;margin-bottom:7px;}
+  .textreq input,.textreq select{width:100%;background:rgba(7,7,11,0.6);border:1px solid var(--line);color:var(--bone);padding:12px 14px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;margin-bottom:16px;}
+  .textreq select{cursor:pointer;}
+  .textreq .tr-actions{display:flex;gap:12px;align-items:center;}
+  .textreq .tr-sent{color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;display:none;}
+  .textreq .tr-cancel{background:none;border:none;color:var(--concrete);font-family:'IBM Plex Mono',monospace;font-size:12px;cursor:pointer;text-decoration:underline;}
+
+  footer.band{padding-top:0;}
+  .footer-panel{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+  .footer-panel .mono{font-size:12px;color:var(--concrete);letter-spacing:0.04em;line-height:1.7;}
+
+  @media (max-width:820px){
+    .about-grid,.bio-grid,.content-grid{grid-template-columns:1fr;}
+    .practitioner-row{grid-template-columns:1fr;text-align:center;}
+    .practitioner-frame{max-width:200px;margin:0 auto;}
+    .panel{padding:40px 24px;}
+    .navlinks{gap:18px;font-size:11px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ticker-track,.l-fog-far img,.l-fog-near img{animation:none;}
+    .reveal{opacity:1;transform:none;transition:none;}
+    img.layer,.fog-wrap{transform:none !important;}
+  }
+
+  /* ============ FITNESS BRAINIAC RADIO ============ */
+  .radio{position:fixed;right:20px;bottom:20px;z-index:200;font-family:'IBM Plex Mono',monospace;}
+  .radio-btn{display:flex;align-items:center;gap:10px;background:rgba(18,17,28,0.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--bone);padding:11px 16px 11px 13px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.05em;transition:border-color .25s ease, box-shadow .25s ease;}
+  .radio-btn:hover{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue);}
+  .radio-btn.on{border-color:var(--amber);box-shadow:0 0 16px rgba(255,176,32,0.3);}
+  .radio-dish{width:22px;height:22px;flex:none;color:var(--concrete);transition:color .25s ease;}
+  .radio-btn:hover .radio-dish{color:var(--blue);}
+  .radio-btn.on .radio-dish{color:var(--amber);}
+  .radio-label{white-space:nowrap;}
+  .radio-status{font-size:10px;color:var(--concrete);letter-spacing:0.08em;}
+  .radio-btn.on .radio-status{color:var(--amber);}
+  /* three concentric wave arcs: static when off, sequential outward pulse when on */
+  .radio-wave{transform-origin:15px 30px;}
+  .radio-btn.on .radio-wave{animation:radio-emit 1.8s ease-out infinite;}
+  .radio-btn.on .radio-wave.w2{animation-delay:.3s;}
+  .radio-btn.on .radio-wave.w3{animation-delay:.6s;}
+  @keyframes radio-emit{0%{opacity:0.25;}30%{opacity:1;}100%{opacity:0.25;}}
+  /* hidden YouTube player — present for audio, visually offscreen (official IFrame API) */
+  .radio-player{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;left:-9999px;}
+  @media (max-width:600px){
+    .radio{right:12px;bottom:12px;}
+    .radio-label{display:none;}
+    .radio-btn{padding:11px 13px;}
+  }
+  @media (prefers-reduced-motion: reduce){ .radio-btn.on .radio-wave{animation:none;opacity:1;} }
+</style>
+<style>
+  /* privacy-page scoped */
+  body{background:
+    radial-gradient(1000px 700px at 12% -5%, rgba(91,127,255,0.10), transparent 55%),
+    radial-gradient(900px 600px at 100% 8%, rgba(157,92,255,0.09), transparent 55%),
+    #050508;}
+  .legal-wrap{max-width:860px;margin:0 auto;padding:64px 5vw 40px;}
+  .legal .tag{margin-bottom:16px;}
+  .legal h1.display{font-size:clamp(34px,5.5vw,60px);margin-bottom:14px;}
+  .legal .updated{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--concrete);letter-spacing:0.06em;margin-bottom:8px;}
+  .legal h2{font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:19px;letter-spacing:0.01em;margin:40px 0 14px;color:var(--bone);}
+  .legal p,.legal li{color:var(--concrete);font-size:15.5px;line-height:1.75;}
+  .legal p{margin-bottom:14px;}
+  .legal ul{list-style:none;margin:0 0 14px;padding:0;}
+  .legal li{position:relative;padding-left:22px;margin-bottom:9px;}
+  .legal li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:6px;background:var(--blue);border-radius:50%;box-shadow:0 0 8px var(--blue);}
+  .legal a{color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(91,127,255,0.4);}
+  .legal a:hover{color:var(--bone);}
+  .legal strong{color:var(--bone);font-weight:600;}
+  .legal hr.rule{height:1px;background:var(--line);margin:46px 0;border:none;}
+</style>
+</head>
+<body>
+  <div class="content">
+    <nav>
+      <a class="logo" href="index.html">FITNESS <span>BRAINIAC</span></a>
+      <div class="navlinks">
+        <a href="about.html">ABOUT</a>
+        <a href="training.html">TRAINING</a>
+        <a href="mind-forward.html">MIND FORWARD</a>
+        <a href="index.html#contact">CONTACT</a>
+      </div>
+    </nav>
+
+    <main class="legal-wrap legal">
+      <div class="tag">PRIVACY POLICY</div>
+      <h1 class="display">Your data,<br>handled straight.</h1>
+      <div class="updated">Last updated: July 7, 2026</div>
+
+      <p>This policy explains what information Fitness Brainiac (&ldquo;we,&rdquo; &ldquo;us&rdquo;), operated by PJ Hradilek in Agoura Hills, California, collects through <a href="https://www.fitnessbrainiac.com/">fitnessbrainiac.com</a>, and how we use and protect it. Questions? Email <a href="mailto:fitnessbrainiac@gmail.com">fitnessbrainiac@gmail.com</a>.</p>
+
+      <h2>What we collect</h2>
+      <p><strong>Information you give us.</strong> When you use the body fat calculator and choose &ldquo;Email me these results,&rdquo; we collect the <strong>email address</strong> and <strong>ZIP code</strong> you enter, the <strong>consent</strong> you provide, and the body-composition figures you generate. When you use the text-request or contact forms, we collect the details you submit there.</p>
+      <p><strong>Information collected automatically.</strong> At the moment you submit the calculator form, our hosting provider derives an <strong>approximate location</strong> (city, region, country) and your <strong>IP address</strong> from your connection. We use this to confirm submissions come from within our service area and to reduce spam and automated abuse.</p>
+      <p>We don&rsquo;t require an account, and we don&rsquo;t ask for sensitive personal information.</p>
+
+      <h2>How we use it</h2>
+      <ul>
+        <li>To email you the results you asked us to send.</li>
+        <li>To contact you about training, body-composition services, and related offerings you&rsquo;ve consented to hear about.</li>
+        <li>To confirm you&rsquo;re located in our Southern California service area and to screen out automated or bot submissions.</li>
+        <li>To operate, maintain, and improve the site.</li>
+      </ul>
+      <p>We rely on <strong>your consent</strong> &mdash; the checkbox you tick on the form &mdash; as the basis for emailing you and following up.</p>
+
+      <h2>About the location data</h2>
+      <p>IP-based location is <strong>approximate</strong>: accurate to roughly your city and easily changed by VPNs or mobile networks. We use it only as a rough service-area and anti-spam check &mdash; not to pinpoint you &mdash; and we don&rsquo;t enrich it with data brokers.</p>
+
+      <h2>Cookies</h2>
+      <p>The site uses a small number of <strong>functional</strong> cookies &mdash; for example, to remember whether the Fitness Brainiac Radio player is on as you move between pages. These support functionality, not advertising. The calculator keeps your entries in your browser only during your session; it doesn&rsquo;t store them on your device long-term.</p>
+
+      <h2>Who we share it with</h2>
+      <p>We use trusted providers to run the site and deliver email on our behalf: <strong>Netlify</strong> (hosting and the function that processes the form) and <strong>Resend</strong> (email delivery). They process your information only to provide those services.</p>
+      <p><strong>We do not sell your personal information, and we do not share it for cross-context behavioral advertising.</strong></p>
+
+      <h2>How long we keep it</h2>
+      <p>We keep what you submit for as long as needed to respond to you and manage our training relationship, and then only as long as reasonably necessary. You can ask us to delete it at any time.</p>
+
+      <h2>Your choices &amp; California privacy rights</h2>
+      <ul>
+        <li><strong>Opt out of marketing</strong> anytime &mdash; reply to any email from us asking to unsubscribe, or email <a href="mailto:fitnessbrainiac@gmail.com">fitnessbrainiac@gmail.com</a>. We&rsquo;ll stop.</li>
+        <li>Under the <strong>California Consumer Privacy Act</strong> (as amended by the CPRA), California residents can request to know, access, correct, or delete their personal information, and opt out of its sale or sharing &mdash; though we don&rsquo;t sell or share it as those terms are defined.</li>
+        <li>We won&rsquo;t discriminate against you for exercising these rights.</li>
+      </ul>
+      <p>To make a request, email <a href="mailto:fitnessbrainiac@gmail.com">fitnessbrainiac@gmail.com</a> with the details, and we&rsquo;ll verify and respond as required by law.</p>
+
+      <h2>Children</h2>
+      <p>The site and its services are intended for adults. We don&rsquo;t knowingly collect information from children under 16. If you believe a child has provided information, contact us and we&rsquo;ll delete it.</p>
+
+      <h2>Changes</h2>
+      <p>We may update this policy from time to time. The &ldquo;last updated&rdquo; date above reflects the current version.</p>
+
+      <hr class="rule">
+      <p class="mono" style="color:var(--concrete);font-size:13px;line-height:1.8;letter-spacing:0.02em;">FITNESS BRAINIAC &mdash; PJ HRADILEK<br>30125 AGOURA RD #H, AGOURA HILLS, CA 91301<br>FITNESSBRAINIAC@GMAIL.COM</p>
+    </main>
+
+    <footer class="band">
+      <div class="panel footer-panel">
+        <div class="mono">FITNESSBRAINIAC@GMAIL.COM<br>30125 AGOURA RD #H, AGOURA HILLS, CA 91301</div>
+        <div class="mono">© 2026 FITNESS BRAINIAC</div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
