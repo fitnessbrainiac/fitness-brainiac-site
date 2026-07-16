@@ -146,7 +146,9 @@
   .email-box{margin-top:34px;padding:24px;border:1px solid var(--edge);border-radius:3px;background:var(--panel-2);}
   .email-box h3{margin:0 0 6px;font-weight:900;text-transform:uppercase;letter-spacing:0.02em;font-size:18px;}
   .email-box p.lead{margin:0 0 18px;color:var(--ink-dim);font-size:13px;line-height:1.5;max-width:60ch;}
-  .email-fields{display:grid;grid-template-columns:1fr 160px;gap:14px;}
+  .email-fields{display:grid;grid-template-columns:1fr 1fr 140px;gap:14px;}
+  .trainer-check{display:flex;gap:10px;align-items:center;margin:16px 0 4px;font-size:13px;color:var(--ink-dim);font-weight:600;cursor:pointer;}
+  .trainer-check input{accent-color:var(--electric);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
   .email-fields .fld label{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:7px;}
   .email-fields input[type="email"],.email-fields input[type="text"]{width:100%;background:rgba(5,6,15,0.4);border:1px solid var(--edge);
     border-radius:3px;color:var(--ink);font-family:"Space Mono",monospace;font-size:15px;padding:11px 13px;transition:border-color .18s,box-shadow .18s;}
@@ -295,6 +297,10 @@
         <p class="lead">Send this analysis to your inbox. Enter your ZIP so we can confirm you're in the Agoura Hills service area.</p>
         <div class="email-fields">
           <div class="fld">
+            <label for="em-first">First name</label>
+            <input type="text" id="em-first" autocomplete="given-name" maxlength="40" placeholder="Alex">
+          </div>
+          <div class="fld">
             <label for="em-addr">Email address</label>
             <input type="email" id="em-addr" autocomplete="email" placeholder="you@email.com">
           </div>
@@ -303,6 +309,10 @@
             <input type="text" id="em-zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="91301">
           </div>
         </div>
+        <label class="trainer-check">
+          <input type="checkbox" id="em-trainer">
+          <span>I'm a fitness professional / trainer</span>
+        </label>
         <label class="consent">
           <input type="checkbox" id="em-consent">
           <span>I agree Fitness Brainiac may email me these results and contact me about training and body-composition services. <a href="/privacy.html" target="_blank" rel="noopener">Privacy</a>.</span>
@@ -525,10 +535,10 @@
   function validEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);}
   function validZip(v){return /^\d{5}$/.test(v);}
   function refreshSendState(){
-    var ok=validEmail($("em-addr").value.trim()) && validZip($("em-zip").value.trim()) && $("em-consent").checked && !!lastResult;
+    var ok=$("em-first").value.trim().length>0 && validEmail($("em-addr").value.trim()) && validZip($("em-zip").value.trim()) && $("em-consent").checked && !!lastResult;
     $("send").disabled=!ok;
   }
-  ["em-addr","em-zip"].forEach(function(id){$(id).addEventListener("input",refreshSendState);});
+  ["em-first","em-addr","em-zip"].forEach(function(id){$(id).addEventListener("input",refreshSendState);});
   $("em-zip").addEventListener("input",function(){this.value=this.value.replace(/\D/g,"").slice(0,5);});
   $("em-consent").addEventListener("change",refreshSendState);
 
@@ -536,8 +546,10 @@
     var msg=$("send-msg");
     if(!lastResult){msg.className="send-msg bad";msg.textContent="Run an analysis first.";return;}
     var payload=Object.assign({},lastResult,{
+      firstName:$("em-first").value.trim(),
       email:$("em-addr").value.trim(),
       zip:$("em-zip").value.trim(),
+      isTrainer:$("em-trainer").checked,
       consent:true,
       generatedAt:new Date().toISOString()
     });

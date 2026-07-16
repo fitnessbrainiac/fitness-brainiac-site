@@ -36,6 +36,8 @@ export default async (request, context) => {
 
   const email = String(d.email || "").trim();
   const zip = String(d.zip || "").trim();
+  const firstName = esc(String(d.firstName || "").trim().slice(0, 40));
+  const isTrainer = d.isTrainer === true;
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ error: "Enter a valid email." }, 400);
   if (!/^\d{5}$/.test(zip)) return json({ error: "Enter a valid 5-digit ZIP." }, 400);
   if (d.consent !== true) return json({ error: "Consent is required." }, 400);
@@ -78,11 +80,11 @@ export default async (request, context) => {
   const massLine = `${fat.toFixed(1)} ${unit} fat · ${lean.toFixed(1)} ${unit} lean`;
 
   // ---- email 1: results → visitor ----
-  const userHtml = resultsEmail({ methodLabel, sexLabel, age, bf, band, fat, lean, weight, sum, unit, dateStr });
+  const userHtml = resultsEmail({ firstName, methodLabel, sexLabel, age, bf, band, fat, lean, weight, sum, unit, dateStr });
   // ---- email 2: lead → PJ ----
   const geoLine = [city, region, country].filter(Boolean).join(", ") || "unknown";
   const leadHtml = leadEmail({
-    email: esc(email), zip: esc(zip), geoLine: esc(geoLine), ip: esc(ip),
+    firstName, isTrainer, email: esc(email), zip: esc(zip), geoLine: esc(geoLine), ip: esc(ip),
     miles, outsideArea, methodLabel, sexLabel, age, bf, band, massLine, weight, unit, sum, dateStr
   });
 
@@ -95,7 +97,7 @@ export default async (request, context) => {
       }),
       sendEmail(RESEND_API_KEY, {
         from: FROM_EMAIL, to: [LEAD_EMAIL], reply_to: email,
-        subject: `${outsideArea ? "⚠ OUT-OF-AREA " : ""}New body-fat lead — ${zip} (${geoLine})`,
+        subject: `${outsideArea ? "⚠ OUT-OF-AREA " : ""}${isTrainer ? "[TRAINER] " : ""}New body-fat lead — ${firstName ? firstName + ", " : ""}${zip} (${geoLine})`,
         html: leadHtml
       })
     ]);
@@ -141,6 +143,7 @@ function resultsEmail(d) {
       <div style="font-size:22px;font-weight:800;color:#ffffff;margin-top:8px;text-transform:uppercase;">Body Fat Analysis</div>
     </div>
     <div style="padding:30px;">
+      ${d.firstName ? `<div style="font-size:16px;color:#1c2033;margin-bottom:18px;">Hi ${d.firstName},<br><span style="color:#5a6180;font-size:14px;">here's your analysis:</span></div>` : ""}
       <div style="font-size:12px;letter-spacing:1px;color:#8a90a6;text-transform:uppercase;">${d.methodLabel}${meta ? " · " + meta : ""}</div>
       <div style="margin:14px 0 6px;font-size:56px;font-weight:800;color:#0b0e1c;line-height:1;">${d.bf.toFixed(1)}<span style="font-size:24px;color:#8a90a6;">%</span></div>
       <div style="font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#3e74ff;">${d.band}</div>
@@ -170,9 +173,12 @@ function leadEmail(d) {
   return `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;color:#1c2033;">
     <div style="max-width:560px;margin:0 auto;padding:24px;">
       <div style="font-size:12px;letter-spacing:2px;color:#8a90a6;text-transform:uppercase;">New Lead — Body Fat Calculator</div>
-      <h2 style="margin:8px 0 18px;">${d.email}</h2>
+      <h2 style="margin:8px 0 6px;">${d.firstName ? d.firstName + " — " : ""}${d.email}</h2>
+      ${d.isTrainer ? `<div style="display:inline-block;background:#eef2ff;color:#3730a3;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:14px;">Fitness Professional / Trainer</div>` : ""}
       ${flag}
       <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <tr><td style="padding:9px 0;color:#8a90a6;">First name</td><td style="padding:9px 0;text-align:right;font-weight:700;">${d.firstName || "—"}</td></tr>
+        <tr><td style="padding:9px 0;color:#8a90a6;">Trainer?</td><td style="padding:9px 0;text-align:right;font-weight:700;">${d.isTrainer ? "Yes" : "No"}</td></tr>
         <tr><td style="padding:9px 0;color:#8a90a6;">ZIP entered</td><td style="padding:9px 0;text-align:right;font-weight:700;">${d.zip}</td></tr>
         <tr><td style="padding:9px 0;color:#8a90a6;">IP location</td><td style="padding:9px 0;text-align:right;">${d.geoLine}</td></tr>
         <tr><td style="padding:9px 0;color:#8a90a6;">IP address</td><td style="padding:9px 0;text-align:right;">${d.ip}</td></tr>
